@@ -21,7 +21,7 @@ export default function LayoutEmpresa() {
       <Tabs.Screen
         name="dashboard"
         options={{
-          title: 'Dashboard', // Alterado de caminho de arquivo para um texto amigável
+          title: 'Dashboard', 
           tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? 'analytics' : 'analytics-outline'} size={24} color={color} />
           ),
