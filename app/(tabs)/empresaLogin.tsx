@@ -6,7 +6,7 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <Image
-        source={require('../../../assets/LogoFarm.fw.png')}
+        source={require('../../assets/LogoFarm.fw.png')}
         style={{ width: 320, height: 135, marginBottom: 20 }}
       />
       <View style={styles.card}>
@@ -39,11 +39,11 @@ export default function HomeScreen() {
           
         </View>
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={() => router.push('/(tabs)/empresa/menuEmpresa')}>
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.push('/(tabs)/empresa/empresaCadastro')} style={styles.secondaryButton}>
+        <TouchableOpacity onPress={() => router.push('/empresaCadastro')} style={styles.secondaryButton}>
           <Text style={styles.secondaryButtonText}>Cadastrar Empresa</Text>
         </TouchableOpacity>
       </View>

@@ -32,7 +32,7 @@ export default function HomeScreen() {
             placeholderTextColor="rgba(0, 0, 0, 0.4)"
             secureTextEntry
           />
-          <TouchableOpacity onPress={() => router.push('/(tabs)/empresa/empresaLogin')} style={styles.linkEmpresa}>
+          <TouchableOpacity onPress={() => router.push('/empresaLogin')} style={styles.linkEmpresa}>
             <Text style={styles.linkEmpresaText}>Acesso Empresarial</Text>
           </TouchableOpacity>
           
@@ -42,7 +42,7 @@ export default function HomeScreen() {
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.push('../user/cadastro')} style={styles.secondaryButton}>
+        <TouchableOpacity onPress={() => router.push('/cadastroUser')} style={styles.secondaryButton}>
           <Text style={styles.secondaryButtonText}>Cadastrar</Text>
         </TouchableOpacity>
       </View>
