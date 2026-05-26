@@ -6,11 +6,11 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <Image
-        source={require('../../../assets/LogoFarm.fw.png')}
+        source={require('../../assets/LogoFarm.fw.png')}
         style={{ width: 200, height: 80, marginBottom: 10 }}
       />
       <View style={styles.card}>
-        <TouchableOpacity onPress={() => router.push('/empresa/empresaLogin')} style={{ position: 'absolute', top: 16, right: 16, backgroundColor: '#369262', width: 32, height: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
+        <TouchableOpacity onPress={() => router.push('/(tabs)/empresaLogin')} style={{ position: 'absolute', top: 16, right: 16, backgroundColor: '#369262', width: 32, height: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
             <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '700' }}>X</Text>
         </TouchableOpacity>
         <Text style={styles.titulo}>Cadastrar Empresa</Text>

@@ -6,7 +6,7 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <Image
-        source={require('../../../assets/LogoFarm.fw.png')}
+        source={require('../../assets/LogoFarm.fw.png')}
         style={{ width: 200, height: 80, marginBottom: 10 }}
       />
       <View style={styles.card}>
