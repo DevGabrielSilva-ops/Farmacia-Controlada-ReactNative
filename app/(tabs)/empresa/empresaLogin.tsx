@@ -1,4 +1,4 @@
-import {router} from "expo-router";
+import {router} from 'expo-router';
 import { StyleSheet, TextInput, View, Text, TouchableOpacity,Image } from "react-native";
 
 
@@ -6,18 +6,21 @@ export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <Image
-        source={require('../../assets/LogoFarm.fw.png')}
+        source={require('../../../assets/LogoFarm.fw.png')}
         style={{ width: 320, height: 135, marginBottom: 20 }}
       />
       <View style={styles.card}>
-        <Text style={styles.titulo}>Login/Cadastro</Text>
+        <TouchableOpacity onPress={() => router.push('/')} style={{ position: 'absolute', top: 16, right: 16, backgroundColor: '#369262', width: 32, height: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
+                    <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '700' }}>X</Text>
+            </TouchableOpacity>
+        <Text style={styles.titulo}>Login Empresarial</Text>
         <Text style={styles.subtitulo}>Acesse sua conta para continuar.</Text>
 
         <View style={styles.cardForm}>
-          <Text style={styles.label}>CPF ou e-mail</Text>
+          <Text style={styles.label}>CNPJ ou e-mail</Text>
           <TextInput
             style={styles.input}
-            placeholder="Digite seu CPF ou e-mail"
+            placeholder="Digite seu CNPJ ou e-mail"
             placeholderTextColor="rgba(0, 0, 0, 0.4)"
             keyboardType="email-address"
             autoCapitalize="none"
@@ -32,9 +35,7 @@ export default function HomeScreen() {
             placeholderTextColor="rgba(0, 0, 0, 0.4)"
             secureTextEntry
           />
-          <TouchableOpacity onPress={() => router.push('/(tabs)/empresa/empresaLogin')} style={styles.linkEmpresa}>
-            <Text style={styles.linkEmpresaText}>Acesso Empresarial</Text>
-          </TouchableOpacity>
+          
           
         </View>
 
@@ -42,8 +43,8 @@ export default function HomeScreen() {
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity onPress={() => router.push('../user/cadastro')} style={styles.secondaryButton}>
-          <Text style={styles.secondaryButtonText}>Cadastrar</Text>
+        <TouchableOpacity onPress={() => router.push('/(tabs)/empresa/empresaCadastro')} style={styles.secondaryButton}>
+          <Text style={styles.secondaryButtonText}>Cadastrar Empresa</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -120,17 +121,6 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
     textAlign: 'center',
-  },
-
-  linkEmpresa: {
-    alignSelf: 'flex-end',
-    marginTop: 8,
-  },
-
-  linkEmpresaText: {
-    fontSize: 12,
-    color: '#369262',
-    fontWeight: '700',
   },
 
   secondaryButton: {

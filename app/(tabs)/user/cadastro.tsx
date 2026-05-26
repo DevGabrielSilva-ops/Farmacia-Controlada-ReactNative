@@ -1,17 +1,27 @@
-import {router} from "expo-router";
-import { StyleSheet, TextInput, View, Text, TouchableOpacity,Image } from "react-native";
 
+import { StyleSheet, TextInput, View, Text, TouchableOpacity,Image } from "react-native";
+import {router} from "expo-router";
 
 export default function HomeScreen() {
   return (
     <View style={styles.container}>
       <Image
-        source={require('../../assets/LogoFarm.fw.png')}
-        style={{ width: 320, height: 135, marginBottom: 20 }}
+        source={require('../../../assets/LogoFarm.fw.png')}
+        style={{ width: 200, height: 80, marginBottom: 10 }}
       />
       <View style={styles.card}>
-        <Text style={styles.titulo}>Login/Cadastro</Text>
-        <Text style={styles.subtitulo}>Acesse sua conta para continuar.</Text>
+        <TouchableOpacity onPress={() => router.push('/')} style={{ position: 'absolute', top: 16, right: 16, backgroundColor: '#369262', width: 32, height: 32, borderRadius: 16, justifyContent: 'center', alignItems: 'center' }}>
+            <Text style={{ color: '#FFFFFF', fontSize: 16, fontWeight: '700' }}>X</Text>
+        </TouchableOpacity>
+        <Text style={styles.titulo}>Cadastro</Text>
+        <Text style={styles.subtitulo}>Crie sua conta para continuar.</Text>
+
+        <View style={styles.listaRequisitos}>
+          <Text style={styles.listaItem}>• Senha deve conter pelo menos 8 caracteres</Text>
+          <Text style={styles.listaItem}>• Senha deve conter pelo menos uma letra maiúscula</Text>
+          <Text style={styles.listaItem}>• Senha deve conter pelo menos uma letra minúscula</Text>
+          <Text style={styles.listaItem}>• Senha deve conter pelo menos um número</Text>
+        </View>
 
         <View style={styles.cardForm}>
           <Text style={styles.label}>CPF ou e-mail</Text>
@@ -32,18 +42,20 @@ export default function HomeScreen() {
             placeholderTextColor="rgba(0, 0, 0, 0.4)"
             secureTextEntry
           />
-          <TouchableOpacity onPress={() => router.push('/(tabs)/empresa/empresaLogin')} style={styles.linkEmpresa}>
-            <Text style={styles.linkEmpresaText}>Acesso Empresarial</Text>
-          </TouchableOpacity>
-          
+        </View>
+        
+        <View style={styles.cardForm}>
+          <Text style={styles.label}>Confirmar Senha</Text>
+          <TextInput
+            style={styles.input}
+            placeholder="Digite sua senha novamente"
+            placeholderTextColor="rgba(0, 0, 0, 0.4)"
+            secureTextEntry
+          />
         </View>
 
         <TouchableOpacity style={styles.button}>
-          <Text style={styles.buttonText}>Entrar</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity onPress={() => router.push('../user/cadastro')} style={styles.secondaryButton}>
-          <Text style={styles.secondaryButtonText}>Cadastrar</Text>
+          <Text style={styles.buttonText}>Criar Conta</Text>
         </TouchableOpacity>
       </View>
     </View>
@@ -122,17 +134,6 @@ const styles = StyleSheet.create({
     textAlign: 'center',
   },
 
-  linkEmpresa: {
-    alignSelf: 'flex-end',
-    marginTop: 8,
-  },
-
-  linkEmpresaText: {
-    fontSize: 12,
-    color: '#369262',
-    fontWeight: '700',
-  },
-
   secondaryButton: {
     width: '100%',
     paddingVertical: 14,
@@ -141,6 +142,17 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: '#369262',
     marginTop: 14,
+  },
+
+  listaRequisitos: {
+    marginBottom: 18,
+  },
+
+  listaItem: {
+    fontSize: 13,
+    color: '#3F524A',
+    lineHeight: 20,
+    marginBottom: 3,
   },
 
   secondaryButtonText: {
