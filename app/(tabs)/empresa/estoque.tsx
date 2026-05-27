@@ -1,14 +1,61 @@
 
-import { StyleSheet, View, TouchableOpacity, Image, Text, FlatList } from "react-native";
+import React, { useState } from "react";
+import { StyleSheet, View, TouchableOpacity, Image, Text, FlatList, Modal, TextInput, KeyboardAvoidingView, Platform } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
+type Remedio = {
+    id: string;
+    name: string;
+    quantity: number;
+    image: any;
+};
+
 export default function HomeScreen() {
-    const remedios = Array.from({ length: 6 }).map((_, i) => ({
+    const remediosIniciais: Remedio[] = Array.from({ length: 6 }).map((_, i) => ({
         id: String(i),
         name: 'Dipirona Monidrata',
-        quantity: 0,
+        quantity: 5,
         image: require('../../../assets/Dipirona.fw.png'),
     }));
+
+    const [remedios, setRemedios] = useState<Remedio[]>(remediosIniciais);
+    const [modalDetalhesVisivel, setModalDetalhesVisivel] = useState(false);
+    const [modalRetiradaVisivel, setModalRetiradaVisivel] = useState(false);
+    const [remedioSelecionado, setRemedioSelecionado] = useState<Remedio | null>(null);
+    const [motivoRetirada, setMotivoRetirada] = useState('');
+    const [dataRetirada, setDataRetirada] = useState(new Date().toLocaleDateString('pt-BR'));
+
+    const abrirDetalhes = (item: Remedio) => {
+        setRemedioSelecionado(item);
+        setModalDetalhesVisivel(true);
+    };
+
+    const fecharDetalhes = () => {
+        setModalDetalhesVisivel(false);
+        setRemedioSelecionado(null);
+    };
+
+    const abrirRetirada = () => {
+        setModalRetiradaVisivel(true);
+    };
+
+    const confirmarRetirada = () => {
+        if (!remedioSelecionado) return;
+
+        setRemedios((listaAtual) =>
+            listaAtual.map((item) =>
+                item.id === remedioSelecionado.id
+                    ? { ...item, quantity: Math.max(0, item.quantity - 1) }
+                    : item
+            )
+        );
+
+        setModalRetiradaVisivel(false);
+        setModalDetalhesVisivel(false);
+        setRemedioSelecionado(null);
+        setMotivoRetirada('');
+        setDataRetirada(new Date().toLocaleDateString('pt-BR'));
+    };
 
     return (
         <View style={styles.container}>
@@ -46,29 +93,125 @@ export default function HomeScreen() {
                 )}
                 renderItem={({ item }) => (
                     <View style={styles.card}>
-                        <Image source={item.image} style={styles.cardImage} />
+                        <View style={styles.imagemDentroCard}>
+                            <Image source={item.image} style={styles.imagemCard} />
+                            <View style={styles.etiquetaCard}>
+                                <Text style={styles.textoEtiqueta}>Tarja Vermelha</Text>
+                            </View>
+                        </View>
 
-                        <View style={styles.cardContent}>
-                            <Text style={{ fontSize: 16, fontWeight: '600' }}>Nome: {item.name}</Text>
-                            <Text style={{ fontSize: 15, color: 'gray', marginBottom: 6 }}>Quantidade: {item.quantity}</Text>
+                        <View style={styles.conteudoCard}>
+                            <Text style={styles.tituloCard}>{item.name}</Text>
+                            <Text style={styles.subtituloCard}>Controle de estoque e doações</Text>
 
-                            <View style={{ flexDirection: 'row', flexWrap: 'wrap', marginBottom: 8 }}>
-                                <Text style={styles.tag}>Dor de cabeça</Text>
-                                <Text style={styles.tag}>Dor no corpo</Text>
-                                <Text style={styles.tag}>Vômitos</Text>
+                            <View style={styles.linhaInfo}>
+                                <View>
+                                    <Text style={styles.rotuloInfo}>Quantidade</Text>
+                                    <Text style={styles.valorInfo}>{item.quantity}</Text>
+                                </View>
+                                <View>
+                                    <Text style={styles.rotuloInfo}>Status</Text>
+                                    <Text style={styles.valorInfo}>Em estoque</Text>
+                                </View>
                             </View>
 
-                            <View style={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-                                <Text style={styles.tarja}>Tarja</Text>
-
-                                <TouchableOpacity style={styles.infoButton}>
-                                    <Text style={{ fontSize: 14, color: 'white', textAlign: 'center' }}>Mais Infos</Text>
-                                </TouchableOpacity>
+                            <View style={styles.containerTags}>
+                                <Text style={styles.etiqueta}>Dor de cabeça</Text>
+                                <Text style={styles.etiqueta}>Dor no corpo</Text>
+                                <Text style={styles.etiqueta}>Vômitos</Text>
                             </View>
+
+                            <TouchableOpacity style={styles.botaoInfo} onPress={() => abrirDetalhes(item)}>
+                                <Text style={styles.textoBotaoInfo}>Ver detalhes</Text>
+                            </TouchableOpacity>
                         </View>
                     </View>
                 )}
             />
+
+            <Modal visible={modalDetalhesVisivel} transparent animationType="slide">
+                <View style={styles.modalFundo}>
+                    <View style={styles.modalCard}>
+                        <Text style={styles.modalTitulo}>{remedioSelecionado?.name}</Text>
+                        <Text style={styles.modalSubtitulo}>Detalhes completos do produto</Text>
+
+                        <View style={styles.gradeInfoModal}>
+                            <View style={styles.itemInfoModal}>
+                                <Text style={styles.rotuloInfo}>Quantidade</Text>
+                                <Text style={styles.valorInfo}>{remedioSelecionado?.quantity ?? '-'}</Text>
+                            </View>
+                            <View style={styles.itemInfoModal}>
+                                <Text style={styles.rotuloInfo}>Status</Text>
+                                <Text style={styles.valorInfo}>{(remedioSelecionado?.quantity ?? 0) > 0 ? 'Disponível' : 'Esgotado'}</Text>
+                            </View>
+                            <View style={styles.itemInfoModal}>
+                                <Text style={styles.rotuloInfo}>Lote</Text>
+                                <Text style={styles.valorInfo}>A1B2C3</Text>
+                            </View>
+                            <View style={styles.itemInfoModal}>
+                                <Text style={styles.rotuloInfo}>Validade</Text>
+                                <Text style={styles.valorInfo}>12/2026</Text>
+                            </View>
+                        </View>
+
+                        <Text style={styles.rotuloModal}>Fabricante</Text>
+                        <Text style={styles.textoModal}>Farmacorp Brasil</Text>
+
+                        <Text style={styles.rotuloModal}>Indicações principais</Text>
+                        <Text style={styles.textoModal}>Indicado para dor de cabeça, dor no corpo e vômitos. Uso oral e controle de doação.</Text>
+
+                        <Text style={styles.rotuloModal}>Observações</Text>
+                        <Text style={styles.textoModal}>Estoque armazenado em temperatura controlada. Priorizar saída para doações emergenciais.</Text>
+
+                        <View style={styles.areaBotoesModal}>
+                            <TouchableOpacity style={[styles.botaoSecundario, styles.botaoPrincipal]} onPress={abrirRetirada}>
+                                <Text style={styles.textoBotaoSecundario}>Retirar do estoque</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={[styles.botaoSecundario, styles.botaoNeutro]} onPress={fecharDetalhes}>
+                                <Text style={styles.textoBotaoNeutro}>Fechar</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </View>
+            </Modal>
+
+            <Modal visible={modalRetiradaVisivel} transparent animationType="fade">
+                <KeyboardAvoidingView
+                    style={styles.modalFundo}
+                    behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+                >
+                    <View style={styles.modalCard}>
+                        <Text style={styles.modalTitulo}>Retirar produto</Text>
+                        <Text style={styles.modalSubtitulo}>Informe os dados da retirada</Text>
+
+                        <Text style={styles.rotuloModal}>Motivo da retirada</Text>
+                        <TextInput
+                            value={motivoRetirada}
+                            onChangeText={setMotivoRetirada}
+                            style={styles.campoInput}
+                            placeholder="Ex: Doação ou descarte"
+                            placeholderTextColor="#9ca3af"
+                        />
+
+                        <Text style={styles.rotuloModal}>Data da retirada</Text>
+                        <TextInput
+                            value={dataRetirada}
+                            onChangeText={setDataRetirada}
+                            style={styles.campoInput}
+                            placeholder="DD/MM/AAAA"
+                            placeholderTextColor="#9ca3af"
+                        />
+
+                        <TouchableOpacity style={styles.botaoConfirmar} onPress={confirmarRetirada}>
+                            <Text style={styles.textoBotaoConfirmar}>Confirmar retirada</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.botaoFecharModal} onPress={() => setModalRetiradaVisivel(false)}>
+                            <Text style={styles.textoBotaoFecharModal}>Cancelar</Text>
+                        </TouchableOpacity>
+                    </View>
+                </KeyboardAvoidingView>
+            </Modal>
         </View>
     );
 }
@@ -116,60 +259,253 @@ const styles = StyleSheet.create({
     },
 
     card: {
-        width: '50%',
-        backgroundColor: '#fff',
-        borderRadius: 12,
-        padding: 8,
-        marginTop: 50,
+        width: '48%',
+        backgroundColor: '#ffffff',
+        borderRadius: 24,
+        padding: 14,
+        marginTop: 20,
         marginBottom: 12,
-        borderWidth: 1,
-        borderColor: '#eee',
-        gap: 20,
+        shadowColor: '#000',
+        shadowOpacity: 0.08,
+        shadowRadius: 14,
+        shadowOffset: { width: 0, height: 8 },
+        elevation: 6,
     },
 
-    cardImage: {
+    imagemDentroCard: {
+        position: 'relative',
+        marginBottom: 14,
+    },
+
+    imagemCard: {
         width: '100%',
-        height: 120,
-        resizeMode: 'contain',
+        height: 140,
+        resizeMode: 'cover',
+        borderRadius: 18,
+        backgroundColor: '#f7fafc',
+    },
+
+    etiquetaCard: {
+        position: 'absolute',
+        top: 12,
+        right: 12,
+        backgroundColor: 'rgba(255, 255, 255, 0.92)',
+        borderRadius: 999,
+        borderWidth: 1,
+        borderColor: '#e2e8f0',
+        paddingHorizontal: 10,
+        paddingVertical: 4,
+    },
+
+    textoEtiqueta: {
+        fontSize: 11,
+        fontWeight: '700',
+        color: '#dc2626',
+    },
+
+    conteudoCard: {
+        paddingTop: 2,
+    },
+
+    tituloCard: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#111827',
+        marginBottom: 4,
+    },
+
+    subtituloCard: {
+        fontSize: 13,
+        color: '#6b7280',
+        marginBottom: 12,
+    },
+
+    linhaInfo: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 12,
+    },
+
+    rotuloInfo: {
+        fontSize: 12,
+        color: '#6b7280',
+        marginBottom: 2,
+    },
+
+    valorInfo: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: '#111827',
+    },
+
+    containerTags: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
         marginBottom: 8,
     },
 
-    cardContent: {
-        paddingHorizontal: 4,
-    },
-
-    tag: {
-        fontSize: 10,
-        fontWeight: '600',
-        borderWidth: 1,
-        maxWidth: 120,
-        paddingHorizontal: 6,
-        paddingVertical: 2,
-        borderRadius: 10,
-        borderColor: 'gray',
-        color: 'gray',
+    etiqueta: {
+        fontSize: 11,
+        fontWeight: '700',
+        color: '#fff',
+        backgroundColor: '#4e9073',
+        paddingHorizontal: 10,
+        paddingVertical: 5,
+        borderRadius: 999,
         marginRight: 6,
         marginBottom: 6,
     },
 
-    tarja: {
-        fontSize: 14,
-        fontWeight: '700',
-        color: 'white',
-        textAlign: 'center',
-        paddingVertical: 6,
-        paddingHorizontal: 10,
-        borderRadius: 12,
-        backgroundColor: 'red',
+    botaoInfo: {
+        backgroundColor: '#72CAA5',
+        paddingVertical: 10,
+        borderRadius: 14,
+        alignItems: 'center',
     },
 
-    infoButton: {
-        backgroundColor: 'rgb(82, 248, 113)',
-        paddingHorizontal: 12,
-        paddingVertical: 6,
-        borderRadius: 12,
+    textoBotaoInfo: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: '#ffffff',
+    },
+
+    modalFundo: {
+        flex: 1,
+        backgroundColor: 'rgba(17, 24, 39, 0.55)',
+        justifyContent: 'center',
+        padding: 20,
+    },
+
+    modalCard: {
+        backgroundColor: '#ffffff',
+        borderRadius: 24,
+        padding: 24,
+        shadowColor: '#000',
+        shadowOpacity: 0.12,
+        shadowRadius: 20,
+        shadowOffset: { width: 0, height: 10 },
+        elevation: 10,
+    },
+
+    modalTitulo: {
+        fontSize: 20,
+        fontWeight: '800',
+        color: '#111827',
+        marginBottom: 4,
+    },
+
+    modalSubtitulo: {
+        fontSize: 14,
+        color: '#6b7280',
+        marginBottom: 18,
+    },
+
+    gradeInfoModal: {
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        justifyContent: 'space-between',
+        marginBottom: 18,
+    },
+
+    itemInfoModal: {
+        width: '48%',
+        backgroundColor: '#f8fafc',
+        borderRadius: 16,
+        padding: 12,
+        marginBottom: 12,
+    },
+
+    linhaInfoModal: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        marginBottom: 18,
+    },
+
+    rotuloModal: {
+        color: '#6b7280',
+        fontSize: 12,
+        marginBottom: 6,
+    },
+
+    textoModal: {
+        color: '#374151',
+        fontSize: 14,
+        marginBottom: 18,
+        lineHeight: 22,
+    },
+
+    areaBotoesModal: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginTop: 20,
+    },
+
+    botaoSecundario: {
+        flex: 1,
+        paddingVertical: 14,
+        borderRadius: 14,
+        alignItems: 'center',
         justifyContent: 'center',
     },
 
-    
+    botaoPrincipal: {
+        backgroundColor: '#2563eb',
+        marginRight: 12,
+    },
+
+    botaoNeutro: {
+        backgroundColor: '#eef2ff',
+    },
+
+    textoBotaoSecundario: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: '#ffffff',
+    },
+
+    textoBotaoNeutro: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: '#1f2937',
+    },
+
+    botaoConfirmar: {
+        backgroundColor: '#10b981',
+        paddingVertical: 14,
+        borderRadius: 14,
+        alignItems: 'center',
+        marginTop: 14,
+    },
+
+    textoBotaoConfirmar: {
+        fontSize: 14,
+        fontWeight: '700',
+        color: '#ffffff',
+    },
+
+    botaoFecharModal: {
+        marginTop: 10,
+        alignItems: 'center',
+        paddingVertical: 12,
+        borderRadius: 14,
+    },
+
+    textoBotaoFecharModal: {
+        color: '#6b7280',
+        fontSize: 14,
+        fontWeight: '700',
+    },
+
+    campoInput: {
+        backgroundColor: '#f3f4f6',
+        borderRadius: 14,
+        paddingVertical: 12,
+        paddingHorizontal: 16,
+        marginBottom: 14,
+        borderWidth: 1,
+        borderColor: '#e5e7eb',
+        color: '#111827',
+    },
+
 });
