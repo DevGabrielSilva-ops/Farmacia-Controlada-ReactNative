@@ -19,21 +19,21 @@ export default function LayoutEmpresa() {
       }}
     >
       <Tabs.Screen
-        name="dashboard"
+        name="menuEmpresa"
         options={{
-          title: 'Dashboard', 
+          title: 'Inicio', 
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'analytics' : 'analytics-outline'} size={24} color={color} />
+            <Ionicons name={focused ? 'home' : 'home-outline'} size={24} color={color} />
           ),
         }}
       />
 
       <Tabs.Screen
-        name="triagem"
+        name="receitas"
         options={{
-          title: 'Triagem',
+          title: 'Receitas',
           tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'checkbox' : 'checkbox-outline'} size={24} color={color} />
+            <Ionicons name={focused ? 'list' : 'list-outline'} size={24} color={color} />
           ),
         }}
       />

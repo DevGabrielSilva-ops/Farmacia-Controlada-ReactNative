@@ -10,7 +10,7 @@ export default function HomeScreen() {
         style={{ width: 320, height: 135, marginBottom: 20 }}
       />
       <View style={styles.card}>
-        <Text style={styles.titulo}>Login/Cadastro</Text>
+        <Text style={styles.titulo}>Login</Text>
         <Text style={styles.subtitulo}>Acesse sua conta para continuar.</Text>
 
         <View style={styles.cardForm}>
