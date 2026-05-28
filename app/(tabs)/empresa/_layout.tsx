@@ -47,6 +47,16 @@ export default function LayoutEmpresa() {
           ),
         }}
       />
+
+      <Tabs.Screen
+        name="Doacao"
+        options={{
+          title: 'Doacao',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? 'clipboard' : 'clipboard-outline'} size={24} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }
