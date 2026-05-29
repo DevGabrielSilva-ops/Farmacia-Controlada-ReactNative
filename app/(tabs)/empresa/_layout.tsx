@@ -57,6 +57,16 @@ export default function LayoutEmpresa() {
           ),
         }}
       />
+
+      <Tabs.Screen
+        name="perfil"
+        options={{
+          title: 'perfil',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? 'person' : 'person-circle-outline'} size={24} color={color} />
+          ),
+        }}
+      />
     </Tabs>
   );
 }

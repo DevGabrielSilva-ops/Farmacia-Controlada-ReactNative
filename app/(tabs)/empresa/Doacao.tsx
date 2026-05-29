@@ -34,31 +34,31 @@ export default function HomeScreen() {
             </View>
 
             <View style={styles.layoutDoacao}>
-                <View style={[styles.layoutItemDoacao, { backgroundColor: 'rgb(255, 25, 0)' }]}>
+                <View style={[styles.layoutItemDoacao, styles.statusRejeitado]}>
                     <Image
-                        source={require('../../../assets/box.png')}
-                        style={{ width: 70, height: 70 }}
+                     source={require('../../../assets/box.png')}
+                     style={{width:50, height:50}}
                     />
-                    <Text style={{ fontSize: 18, color: '#fff', fontWeight: 'bold', textAlign: 'center' }}>Doação Rejeitadas</Text>
-                    <Text style={{ fontSize: 25, color: '#fff', fontWeight: 'bold' }}>0</Text>
+                    <Text style={styles.itemTitle}>Doações Rejeitadas</Text>
+                    <Text style={styles.itemCount}>0</Text>
                 </View>
 
-                <View style={[styles.layoutItemDoacao, { backgroundColor: 'rgb(255, 251, 0)' }]}>
+                <View style={[styles.layoutItemDoacao, styles.statusAnalise]}>
                     <Image
-                        source={require('../../../assets/box.png')}
-                        style={{ width: 70, height: 70 }}
+                     source={require('../../../assets/box.png')}
+                     style={{width:50, height:50}}
                     />
-                    <Text style={{ fontSize: 18, color: '#fff', fontWeight: 'bold', textAlign: 'center' }}>Doação em análise</Text>
-                    <Text style={{ fontSize: 25, color: '#fff', fontWeight: 'bold' }}>0</Text>
+                    <Text style={styles.itemTitle}>Em Análise</Text>
+                    <Text style={styles.itemCount}>0</Text>
                 </View>
 
-                <View style={styles.layoutItemDoacao}>
+                <View style={[styles.layoutItemDoacao, styles.statusLiberado]}>
                     <Image
-                        source={require('../../../assets/box.png')}
-                        style={{ width: 70, height: 70 }}
+                     source={require('../../../assets/box.png')}
+                     style={{width:50, height:50}}
                     />
-                    <Text style={{ fontSize: 18, color: '#fff', fontWeight: 'bold', textAlign: 'center' }}>Doação Liberadas</Text>
-                    <Text style={{ fontSize: 25, color: '#fff', fontWeight: 'bold' }}>0</Text>
+                    <Text style={styles.itemTitle}>Doações Liberadas</Text>
+                    <Text style={styles.itemCount}>0</Text>
                 </View>
             </View>
 
@@ -70,45 +70,45 @@ export default function HomeScreen() {
             <View style={styles.listaDoaLayout}>
                 
 
-                <View style={{ width: '90%', borderWidth: 1, padding: 10, borderRadius: 12, borderColor: 'gray', shadowRadius: 2 }}>
-                    <View style={{ flexDirection: 'column', justifyContent: 'space-between' }}>
-                        <View style={styles.cardHeaderRow}>
-                            <View style={styles.cardHeaderText}>
-                                <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Doação #001</Text>
-                                <Text style={{ fontSize: 13, color: 'gray' }}>Data Chegada: 27/05/2026</Text>
-                                <Text style={{ fontSize: 13, color: 'gray' }}>Remédio: Dipirona</Text>
-                            </View>
-
-                            <View style={styles.statusRow}>
-                                <View style={[styles.statusBadge, styles.statusPendente]}>
-                                    <Text style={styles.badgeText}>Pendente</Text>
-                                </View>
-                                <TouchableOpacity style={styles.infoBadge}>
-                                    <Text style={styles.badgeText}>Mostrar info</Text>
-                                </TouchableOpacity>
-                            </View>
+                <View style={styles.donationCard}>
+                    <View style={styles.cardHeaderRow}>
+                        <View style={styles.cardHeaderText}>
+                            <Text style={styles.donationTitle}>Doação #001</Text>
+                            <Text style={styles.cardInfo}>Data: 27/05/2026</Text>
+                            <Text style={styles.cardInfo}>Medicamento: Dipirona</Text>
                         </View>
 
-                        <View style={{ flexDirection: 'row', gap: 10, marginTop: 10 }}>
-                            <TouchableOpacity style={styles.buttonDoacao}>
-                                <Text style={{ color: 'white' }}>Aprovar</Text>
-                            </TouchableOpacity>
-
-                            <TouchableOpacity style={[styles.buttonDoacao, { backgroundColor: 'rgb(255, 58, 19)' }]}>
-                                <Text style={{ color: 'white' }}>Reprovar</Text>
-                            </TouchableOpacity>
+                        <View style={styles.statusRow}>
+                            <View style={[styles.statusBadge, styles.statusPendente]}>
+                                <Text style={styles.badgeText}>Pendente</Text>
+                            </View>
                         </View>
+                    </View>
 
+                    <View style={styles.actionButtons}>
+                        <TouchableOpacity style={styles.buttonApprove}>
+                            <Ionicons name="checkmark-outline" size={18} color="#fff" />
+                            <Text style={styles.buttonText}>Aprovar</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.buttonReject}>
+                            <Ionicons name="close-outline" size={18} color="#fff" />
+                            <Text style={styles.buttonText}>Rejeitar</Text>
+                        </TouchableOpacity>
+
+                        <TouchableOpacity style={styles.buttonInfo}>
+                            <Ionicons name="information-circle-outline" size={18} color="#fff" />
+                            <Text style={styles.buttonText}>Detalhes</Text>
+                        </TouchableOpacity>
                     </View>
                 </View>
 
-
-                <View style={{ width: '90%', borderWidth: 1, padding: 10, borderRadius: 12, borderColor: 'gray', shadowRadius: 2 }}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <View style={{ flexDirection: 'column', gap: 5 }}>
-                            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Doação #002</Text>
-                            <Text style={{ fontSize: 13, color: 'gray' }}>Data Chegada: 27/05/2026</Text>
-                            <Text style={{ fontSize: 13, color: 'gray' }}>Remédio: Dipirona</Text>
+                <View style={styles.donationCard}>
+                    <View style={styles.cardHeaderRow}>
+                        <View style={styles.cardHeaderText}>
+                            <Text style={styles.donationTitle}>Doação #002</Text>
+                            <Text style={styles.cardInfo}>Data: 27/05/2026</Text>
+                            <Text style={styles.cardInfo}>Medicamento: Dipirona</Text>
                         </View>
 
                         <View style={styles.statusRow}>
@@ -119,12 +119,12 @@ export default function HomeScreen() {
                     </View>
                 </View>
 
-                <View style={{ width: '90%', borderWidth: 1, padding: 10, borderRadius: 12, borderColor: 'gray', shadowRadius: 2 }}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <View style={{ flexDirection: 'column', gap: 5 }}>
-                            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Doação #002</Text>
-                            <Text style={{ fontSize: 13, color: 'gray' }}>Data Chegada: 27/05/2026</Text>
-                            <Text style={{ fontSize: 13, color: 'gray' }}>Remédio: Dipirona</Text>
+                <View style={styles.donationCard}>
+                    <View style={styles.cardHeaderRow}>
+                        <View style={styles.cardHeaderText}>
+                            <Text style={styles.donationTitle}>Doação #003</Text>
+                            <Text style={styles.cardInfo}>Data: 27/05/2026</Text>
+                            <Text style={styles.cardInfo}>Medicamento: Dipirona</Text>
                         </View>
 
                         <View style={styles.statusRow}>
@@ -135,13 +135,12 @@ export default function HomeScreen() {
                     </View>
                 </View>
 
-
-                <View style={{ width: '90%', borderWidth: 1, padding: 10, borderRadius: 12, borderColor: 'gray', shadowRadius: 2 }}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <View style={{ flexDirection: 'column', gap: 5 }}>
-                            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Doação #002</Text>
-                            <Text style={{ fontSize: 13, color: 'gray' }}>Data Chegada: 27/05/2026</Text>
-                            <Text style={{ fontSize: 13, color: 'gray' }}>Remédio: Dipirona</Text>
+                <View style={styles.donationCard}>
+                    <View style={styles.cardHeaderRow}>
+                        <View style={styles.cardHeaderText}>
+                            <Text style={styles.donationTitle}>Doação #004</Text>
+                            <Text style={styles.cardInfo}>Data: 27/05/2026</Text>
+                            <Text style={styles.cardInfo}>Medicamento: Dipirona</Text>
                         </View>
 
                         <View style={styles.statusRow}>
@@ -152,13 +151,12 @@ export default function HomeScreen() {
                     </View>
                 </View>
 
-
-                <View style={{ width: '90%', borderWidth: 1, padding: 10, borderRadius: 12, borderColor: 'gray', shadowRadius: 2 }}>
-                    <View style={{ flexDirection: 'row', justifyContent: 'space-between' }}>
-                        <View style={{ flexDirection: 'column', gap: 5 }}>
-                            <Text style={{ fontSize: 18, fontWeight: 'bold' }}>Doação #002</Text>
-                            <Text style={{ fontSize: 13, color: 'gray' }}>Data Chegada: 27/05/2026</Text>
-                            <Text style={{ fontSize: 13, color: 'gray' }}>Remédio: Dipirona</Text>
+                <View style={styles.donationCard}>
+                    <View style={styles.cardHeaderRow}>
+                        <View style={styles.cardHeaderText}>
+                            <Text style={styles.donationTitle}>Doação #005</Text>
+                            <Text style={styles.cardInfo}>Data: 27/05/2026</Text>
+                            <Text style={styles.cardInfo}>Medicamento: Dipirona</Text>
                         </View>
 
                         <View style={styles.statusRow}>
@@ -251,13 +249,6 @@ const styles = StyleSheet.create({
         backgroundColor: 'rgb(16, 185, 129)',
     },
 
-    infoBadge: {
-        backgroundColor: 'rgb(0, 122, 255)',
-        paddingHorizontal: 10,
-        paddingVertical: 6,
-        borderRadius: 10,
-    },
-
     badgeText: {
         color: '#fff',
         fontWeight: '700',
@@ -266,38 +257,137 @@ const styles = StyleSheet.create({
 
     layoutDoacao: {
         flexDirection: 'row',
-        gap: 15,
-        marginTop: 10,
+        justifyContent: 'center',
         alignItems: 'center',
-        justifyContent: 'center'
+        gap: 16,
+        marginTop: 16,
+        marginBottom: 20,
+        paddingHorizontal: 16,
     },
 
     layoutItemDoacao: {
-        flexDirection: 'column',
-        justifyContent: 'center',
+        flex: 1,
         alignItems: 'center',
-        borderRadius: 8,
-        backgroundColor: 'rgb(39, 243, 100)',
+        justifyContent: 'center',
+        paddingVertical: 18,
+        paddingHorizontal: 12,
+        borderRadius: 16,
+        backgroundColor: '#f5f5f5',
+        minHeight: 140,
+    },
+
+    statusRejeitado: {
+        backgroundColor: '#ff0000',
+        borderWidth: 1,
         shadowRadius: 8,
-        width: '28%',
-        height: '50%',
-        padding: 10
+        borderColor: '#fca5a5',
+    },
+
+    statusAnalise: {
+        backgroundColor: '#ffcc00',
+        borderWidth: 1,
+        shadowRadius: 8,
+        borderColor: '#fde68a',
+    },
+
+    statusLiberado: {
+        backgroundColor: '#04ff7d',
+        borderWidth: 1,
+        shadowRadius: 8,
+        borderColor: '#a7f3d0',
+    },
+
+    itemTitle: {
+        marginTop: 10,
+        fontSize: 13,
+        fontWeight: '700',
+        color: '#fff',
+        textAlign: 'center',
+    },
+
+    itemCount: {
+        marginTop: 8,
+        fontSize: 28,
+        fontWeight: '800',
+        color: '#fff',
+    },
+
+    donationCard: {
+        width: '90%',
+        backgroundColor: '#fff',
+        borderWidth: 1,
+        borderColor: '#e5e7eb',
+        borderRadius: 14,
+        padding: 16,
+        marginBottom: 14,
+        shadowColor: '#000',
+        shadowOpacity: 0.05,
+        shadowRadius: 8,
+        elevation: 2,
+    },
+
+    donationTitle: {
+        fontSize: 16,
+        fontWeight: '700',
+        color: '#1f2937',
+    },
+
+    cardInfo: {
+        fontSize: 12,
+        color: '#6b7280',
+    },
+
+    actionButtons: {
+        flexDirection: 'row',
+        gap: 10,
+        marginTop: 14,
+    },
+
+    buttonApprove: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#10b981',
+        paddingVertical: 11,
+        borderRadius: 10,
+        gap: 6,
+    },
+
+    buttonReject: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#d92f2f',
+        paddingVertical: 11,
+        borderRadius: 10,
+        gap: 6,
+    },
+
+    buttonInfo: {
+        flex: 1,
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#0ea5e9',
+        paddingVertical: 11,
+        borderRadius: 10,
+        gap: 6,
+    },
+
+    buttonText: {
+        color: '#fff',
+        fontSize: 13,
+        fontWeight: '600',
     },
 
     listaDoaLayout: {
-        justifyContent:'center',
+        justifyContent: 'center',
         alignItems: 'center',
-        gap: 20,
-        marginTop: 30
+        gap: 12,
+        marginTop: 24,
+        marginBottom: 20,
     },
-
-    buttonDoacao: {
-        flex: 1,
-        paddingVertical: 10,
-        borderRadius: 8,
-        alignItems: 'center',
-        backgroundColor: 'rgb(3, 227, 14)',
-    }
-
 
 });
