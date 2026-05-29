@@ -1,4 +1,5 @@
 
+import { router } from 'expo-router';
 import { StyleSheet, View, TouchableOpacity, Image, Text, ScrollView } from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 
@@ -18,7 +19,7 @@ export default function HomeScreen() {
               <Ionicons name="notifications-outline" size={28} color="#fff" />
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.buttonPerfil} accessibilityLabel="Perfil do usuário">
+            <TouchableOpacity style={styles.buttonPerfil} onPress={() => router.push('/(tabs)/empresa/perfil')} accessibilityLabel="Perfil do usuário">
               <Ionicons name="person-circle-outline" size={32} color="#fff" />
             </TouchableOpacity>
           </View>
