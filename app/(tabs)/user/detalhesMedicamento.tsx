@@ -28,7 +28,6 @@ export default function DetalhesMedicamento() {
   const router = useRouter();
   const [medicamentoAdicionado, setMedicamentoAdicionado] = useState(false);
 
-  // Dados mockados
   const medicamento = {
     id: '1',
     nome: 'Dipirona 500mg',
