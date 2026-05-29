@@ -241,13 +241,16 @@ export default function MedicamentosUsuario() {
 
 
             {medicamentos_filtrados.length > 0 ? (
-                <FlatList
+                <ScrollView style={{ flex: 1 }} showsVerticalScrollIndicator={true}>
+                    <FlatList
                     data={medicamentos_filtrados}
                     renderItem={renderMedicamento}
                     keyExtractor={item => item.id}
                     contentContainerStyle={estilos.listaContent}
                     showsVerticalScrollIndicator={false}
                 />
+                </ScrollView>
+                
             ) : (
                 <View style={estilos.estadoVazio}>
                     <MaterialCommunityIcons name="magnify" size={48} color={cores.textoSecundario} />
@@ -315,7 +318,6 @@ const estilos = StyleSheet.create({
         paddingHorizontal: 16,
         paddingVertical: 12,
         backgroundColor: cores.fundoPagina,
-        borderBottomWidth: 1,
         borderBottomColor: cores.borda,
     },
     campoBusca: {
@@ -339,11 +341,14 @@ const estilos = StyleSheet.create({
         borderBottomWidth: 1,
         borderBottomColor: cores.borda,
         maxHeight: 60,
+        
     },
     contentFiltros: {
         paddingHorizontal: 16,
         paddingVertical: 12,
         gap: 8,
+        
+        
     },
     filtro: {
         paddingVertical: 7,
@@ -352,10 +357,12 @@ const estilos = StyleSheet.create({
         backgroundColor: cores.fundoLeve,
         borderWidth: 1,
         borderColor: cores.borda,
+       
     },
     filtroSelecionado: {
         backgroundColor: cores.primaria,
         borderColor: cores.primaria,
+        
     },
     textoFiltro: {
         fontSize: 12,
@@ -369,6 +376,7 @@ const estilos = StyleSheet.create({
         padding: 16,
         paddingBottom: 20,
         gap: 12,
+        marginTop: 10,
     },
     cartaoMedicamento: {
         backgroundColor: cores.fundoPagina,

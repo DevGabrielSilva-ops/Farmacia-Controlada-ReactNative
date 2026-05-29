@@ -48,22 +48,24 @@ export default function LayoutEmpresa() {
         }}
       />
 
+      
+
+      <Tabs.Screen
+        name="doacao"
+        options={{
+          title: 'Doação',
+          tabBarIcon: ({ color, focused }) => (
+            <Ionicons name={focused ? 'gift' : 'gift-outline'} size={24} color={color} />
+          ),
+        }}
+      />
+
       <Tabs.Screen
         name="historico"
         options={{
           title: 'Historico',
           tabBarIcon: ({ color, focused }) => (
             <Ionicons name={focused ? 'time' : 'time-outline'} size={24} color={color} />
-          ),
-        }}
-      />
-
-      <Tabs.Screen
-        name="minhasFarmacia"
-        options={{
-          title: 'Farmácia',
-          tabBarIcon: ({ color, focused }) => (
-            <Ionicons name={focused ? 'business' : 'business-outline'} size={24} color={color} />
           ),
         }}
       />

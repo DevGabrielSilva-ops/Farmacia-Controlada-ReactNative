@@ -73,12 +73,12 @@ export default function MenuUsuario() {
     const cartoesPrincipais: cartoes[] = [
         {
             id: '1',
-            titulo: 'Minhas Receitas',
-            descricao: 'Prescrições ativas',
+            titulo: 'Minhas Doações',
+            descricao: 'Lista de doações realizadas',
             numero: dadosUsuario.receitas,
             icone: 'pill',
             cor: cores.verdeSuccesso,
-            rota: '/(tabs)/user/receitas',
+            rota: '/(tabs)/user/doacao',
         },
         {
             id: '2',
