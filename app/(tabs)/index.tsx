@@ -38,7 +38,7 @@ export default function HomeScreen() {
           
         </View>
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity onPress={() => router.push('/(tabs)/user/menuUsuario')} style={styles.button}>
           <Text style={styles.buttonText}>Entrar</Text>
         </TouchableOpacity>
 
