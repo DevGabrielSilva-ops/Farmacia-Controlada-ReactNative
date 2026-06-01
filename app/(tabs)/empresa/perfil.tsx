@@ -1,6 +1,8 @@
-import { View, Image, Text, ScrollView, StyleSheet, TouchableOpacity } from "react-native";
+import React, { useState, useRef } from "react";
+import { View, Image, Text, ScrollView, StyleSheet, TouchableOpacity} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import { router } from "expo-router";
+import { CameraView, useCameraPermissions } from 'expo-camera';
 
 const company = {
   name: 'Farmácia Controlada',
@@ -12,19 +14,91 @@ const company = {
 };
 
 export default function Perfil() {
+ 
+  const [perfilFoto, setPerfilFoto] = useState<string | null>(null);
+  const [cameraAtiva, setCameraAtiva] = useState<boolean>(false);
+  const [ladoCamera, setLadoCamera] = useState<'back' | 'front'>('front'); 
+
+  const [permissao, pedirPermissao] = useCameraPermissions();
+  const cameraRef = useRef<any>(null);
+
+  
+  const handleAbrirCamera = async () => {
+    if (!permissao?.granted) {
+      const resultado = await pedirPermissao();
+      if (!resultado.granted) return; 
+    }
+    setCameraAtiva(true);
+  };
+
+  
+  const tirarFoto = async () => {
+    if (cameraRef.current) {
+      try {
+        const foto = await cameraRef.current.takePictureAsync({
+          quality: 0.8,
+          skipProcessing: false,
+        });
+        if (foto && foto.uri) {
+          setPerfilFoto(foto.uri); 
+          setCameraAtiva(false);   
+        }
+      } catch (error) {
+        console.log("Erro ao tirar foto:", error);
+      }
+    }
+  };
+
+  
+  if (cameraAtiva) {
+    return (
+      <View style={styles.cameraContainer}>
+        <CameraView 
+          style={styles.camera} 
+          facing={ladoCamera} 
+          ref={cameraRef}
+        >
+          
+          <TouchableOpacity style={styles.botaoFecharCamera} onPress={() => setCameraAtiva(false)}>
+            <Ionicons name="close" size={28} color="#fff" />
+          </TouchableOpacity>
+
+          <View style={styles.containerBotoesCamera}>
+            
+            <TouchableOpacity 
+              style={styles.botaoCirculoSecundario} 
+              onPress={() => setLadoCamera(current => (current === 'back' ? 'front' : 'back'))}
+            >
+              <Ionicons name="camera-reverse-outline" size={24} color="#FFF" />
+            </TouchableOpacity>
+
+          
+            <TouchableOpacity style={styles.botaoDisparador} onPress={tirarFoto}>
+              <View style={styles.circuloInternoDisparador} />
+            </TouchableOpacity>
+
+            
+            <View style={{ width: 50 }} />
+          </View>
+        </CameraView>
+      </View>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.content}>
         <View style={styles.header}>
           <View style={styles.profileGroup}>
             <View style={styles.profileImageWrapper}>
+              
               <Image
-                source={require('../../../assets/LogoFarm.fw.png')}
+                source={perfilFoto ? { uri: perfilFoto } : require('../../../assets/LogoFarm.fw.png')}
                 style={styles.profileImage}
                 resizeMode="cover"
               />
             </View>
-            <TouchableOpacity style={styles.photoButton}>
+            <TouchableOpacity style={styles.photoButton} onPress={handleAbrirCamera}>
               <Ionicons name="camera-outline" size={16} color="#2A7B63" />
               <Text style={styles.photoButtonText}>Alterar foto</Text>
             </TouchableOpacity>
@@ -90,7 +164,7 @@ const styles = StyleSheet.create({
   },
   header: {
     marginHorizontal: 16,
-    marginTop: 20,
+    marginTop: 40, 
     padding: 22,
     borderRadius: 24,
     backgroundColor: '#72CAA5',
@@ -226,5 +300,53 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: '700',
     marginLeft: 10,
+  },
+  
+  
+  cameraContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+  },
+  camera: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingBottom: 40,
+  },
+  botaoFecharCamera: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    padding: 10,
+    borderRadius: 30,
+  },
+  containerBotoesCamera: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingHorizontal: 32,
+  },
+  botaoCirculoSecundario: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  botaoDisparador: {
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    borderWidth: 4,
+    borderColor: '#FFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  circuloInternoDisparador: {
+    width: 62,
+    height: 62,
+    borderRadius: 31,
+    backgroundColor: '#FFF',
   },
 });

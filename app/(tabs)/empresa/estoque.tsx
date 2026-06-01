@@ -184,12 +184,21 @@ export default function HomeScreen() {
                         <Text style={styles.modalTitulo}>Retirar produto</Text>
                         <Text style={styles.modalSubtitulo}>Informe os dados da retirada</Text>
 
-                        <Text style={styles.rotuloModal}>Motivo da retirada</Text>
+                        <Text style={styles.rotuloModal}>Motivo da retirada: </Text>
                         <TextInput
                             value={motivoRetirada}
                             onChangeText={setMotivoRetirada}
                             style={styles.campoInput}
                             placeholder="Ex: Doação ou descarte"
+                            placeholderTextColor="#9ca3af"
+                        />
+
+                        <Text style={styles.rotuloModal}>Quantidade: </Text>
+                        <TextInput
+                            value={motivoRetirada}
+                            onChangeText={setMotivoRetirada}
+                            style={styles.campoInput}
+                            placeholder="Quantidade a ser retirada"
                             placeholderTextColor="#9ca3af"
                         />
 
@@ -447,10 +456,11 @@ const styles = StyleSheet.create({
         borderRadius: 14,
         alignItems: 'center',
         justifyContent: 'center',
+        backgroundColor: '#72CAA5',
     },
 
     botaoPrincipal: {
-        backgroundColor: '#2563eb',
+        backgroundColor: '#72CAA5',
         marginRight: 12,
     },
 
