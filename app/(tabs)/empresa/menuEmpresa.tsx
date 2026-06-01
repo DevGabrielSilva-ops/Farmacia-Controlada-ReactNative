@@ -112,6 +112,13 @@ export default function HomeScreen() {
               <TouchableOpacity style={[styles.triageButton, { backgroundColor: '#E60A0A' }]}>
                 <Text style={styles.triageButtonText}>Rejeitar</Text>
               </TouchableOpacity>
+              <TouchableOpacity 
+              style={[styles.triageButton, 
+              { backgroundColor: '#0a6de6' },
+              ]}>
+                <Ionicons name="information-circle-outline" size={18} color="#fff" />
+                <Text style={styles.triageButtonText}>Detalhes</Text>
+              </TouchableOpacity>
             </View>
           </View>
 
@@ -327,5 +334,6 @@ const styles = StyleSheet.create({
         color: '#fff',
         fontWeight: '600',
         fontSize: 14,
+        
     },
 });
