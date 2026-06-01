@@ -61,7 +61,7 @@ export default function PerfilUsuario() {
   const tirarFoto = async () => {
     if (cameraRef.current) {
       try {
-        const foto = await cameraRef.current.takePictureAsync({
+        const foto = await cameraRef.current .takePictureAsync({
           quality: 0.8,
           skipProcessing: false,
         });
@@ -116,7 +116,7 @@ export default function PerfilUsuario() {
           <View style={styles.containerBotoesCamera}>
             <TouchableOpacity 
               style={styles.botaoCirculoSecundario} 
-              onPress={() => setLadoCamera(current => (current === 'back' ? 'front' : 'back'))}
+              onPress={() => setLadoCamera(lado => (lado === 'back' ? 'front' : 'back'))}
             >
               <Ionicons name="camera-reverse-outline" size={24} color="#FFF" />
             </TouchableOpacity>

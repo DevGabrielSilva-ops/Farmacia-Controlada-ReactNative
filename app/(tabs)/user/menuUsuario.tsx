@@ -105,7 +105,7 @@ export default function MenuUsuario() {
             label: 'Doação',
             descricao: 'Realizar Doações',
             icone: 'heart',
-            rota: '/(tabs)/user/perfil',
+            rota: '/(tabs)/user/doacao',
         }
     ];
 

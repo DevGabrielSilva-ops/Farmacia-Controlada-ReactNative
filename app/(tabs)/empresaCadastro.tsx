@@ -2,10 +2,74 @@
 import { StyleSheet, TextInput, View, Text, TouchableOpacity, Image, useWindowDimensions, KeyboardAvoidingView, Platform, ScrollView } from "react-native";
 import { Ionicons } from '@expo/vector-icons';
 import { router } from "expo-router";
+import { useState, useRef } from "react";
+import { CameraView, useCameraPermissions } from "expo-camera";
 
 export default function HomeScreen() {
   const { width } = useWindowDimensions();
   const isWide = width >= 760;
+  const [logo, setLogo] = useState<string | null>(null)
+  const [permissao, setPermissao] = useCameraPermissions()
+  const [cameraAtiva, setCameraAtiva] = useState<boolean>(false)
+  const [ladoCamera, setLadoCamera] = useState<'back' | 'front'>('back');
+  const cameraRef = useRef<any>(null);
+
+
+  const handleAbrirCamera = async () => {
+    if (!permissao?.granted) {
+        const resposta = await setPermissao();
+
+        if (resposta.granted) {
+            setCameraAtiva(true);
+        }
+    } else {
+        setCameraAtiva(true);
+    }
+    };
+
+    const tirarFoto = async () => {
+        if(cameraRef.current) {
+            try{
+                const foto = await cameraRef.current.takePictureAsync()
+                if(foto && foto.uri){
+                    setCameraAtiva(false)
+                    setLogo(foto.uri)
+                }
+            } catch (error) {
+            alert(error)
+        }
+    }}
+
+    if(cameraAtiva) {
+              return (
+              <View style={styles.cameraContainer}>
+                      <CameraView 
+                        style={styles.camera} 
+                        facing={ladoCamera} 
+                        ref={cameraRef}
+                      >
+                        <TouchableOpacity style={styles.botaoFecharCamera} onPress={() => setCameraAtiva(false)}>
+                          <Ionicons name="close" size={28} color="#fff" />
+                        </TouchableOpacity>
+              
+                        <View style={styles.containerBotoesCamera}>
+                          <TouchableOpacity 
+                            style={styles.botaoCirculoSecundario} 
+                            onPress={() => setLadoCamera(lado => (lado === 'back' ? 'front' : 'back'))}
+                          >
+                            <Ionicons name="camera-reverse-outline" size={24} color="#FFF" />
+                          </TouchableOpacity>
+              
+                          <TouchableOpacity style={styles.botaoDisparador} onPress={tirarFoto}>
+                            <View style={styles.circuloInternoDisparador} />
+                          </TouchableOpacity>
+              
+                          <View style={{ width: 50 }} />
+                        </View>
+                      </CameraView>
+              </View>
+              )
+          }
 
   return (
     <KeyboardAvoidingView
@@ -33,11 +97,22 @@ export default function HomeScreen() {
         <View style={styles.logoSection}>
           <Text style={styles.sectionLabel}>Logo da empresa</Text>
           <Text style={styles.sectionDescription}>Adicione a imagem da empresa para personalizar seu perfil.</Text>
-          <View style={styles.logoPreview}>
+          
+          {logo ? (
+            <View style={styles.logoPreview}>
+              <Image
+              source={logo ? {uri: logo}: require('../../assets/LogoFarm.fw.png')}
+              style={{width: 210,  height: 210, borderRadius: 45}}
+              />
+          </View>
+          ): (
+            <View style={styles.logoPreview}>
             <Ionicons name="image-outline" size={36} color="#AFB8B3" />
             <Text style={styles.logoPreviewText}>Logomarca</Text>
           </View>
-          <TouchableOpacity style={styles.logoButton}>
+          )}
+          
+          <TouchableOpacity style={styles.logoButton} onPress={handleAbrirCamera}>
             <Ionicons name="camera-outline" size={18} color="#369262" />
             <Text style={styles.logoButtonText}>Adicionar logo</Text>
           </TouchableOpacity>
@@ -322,5 +397,53 @@ const styles = StyleSheet.create({
     fontSize: 15,
     fontWeight: '700',
     textAlign: 'center',
-  }
+  },
+
+  cameraContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+  },
+  camera: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingBottom: 40,
+  },
+  botaoFecharCamera: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    padding: 10,
+    borderRadius: 30,
+  },
+  containerBotoesCamera: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingHorizontal: 32,
+  },
+  botaoCirculoSecundario: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  botaoDisparador: {
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    borderWidth: 4,
+    borderColor: '#FFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  circuloInternoDisparador: {
+    width: 62,
+    height: 62,
+    borderRadius: 31,
+    backgroundColor: '#FFF',
+  },
+  
 });

@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
     View,
     Text,
@@ -13,6 +13,7 @@ import {
 } from 'react-native';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 import { router } from 'expo-router';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 
 const cores = {
     primaria: '#72CAA5',
@@ -45,6 +46,36 @@ export default function TelaDoacao() {
         dataValidade: '',
         foto: null,
     });
+    const [doacao, setDoacao] = useState<string | null>(null)
+    const [permissao, setPermissao] = useCameraPermissions()
+    const [cameraAtiva, setCameraAtiva] = useState<boolean>(false)
+    const [ladoCamera, setLadoCamera] = useState<'back' | 'front'>('back');
+    const cameraRef = useRef<any>(null);
+
+    const handleAbrirCamera = async () => {
+    if (!permissao?.granted) {
+        const resposta = await setPermissao();
+
+        if (resposta.granted) {
+            setCameraAtiva(true);
+        }
+    } else {
+        setCameraAtiva(true);
+    }
+    };
+
+    const tirarFoto = async () => {
+        if(cameraRef.current) {
+            try{
+                const foto = await cameraRef.current.takePictureAsync()
+                if(foto && foto.uri){
+                    setCameraAtiva(false)
+                    setDoacao(foto.uri)
+                }
+            } catch (error) {
+            alert(error)
+        }
+    }}
 
     const limparFormulario = () => {
         setDadosMedicamento({
@@ -61,10 +92,6 @@ export default function TelaDoacao() {
         setModalVisivel(false);
     };
 
-    const handleAdicionarFoto = () => {
-        // Simulando adição de foto
-        Alert.alert('Foto', 'Selecionar da câmera ou galeria');
-    };
 
     const confirmarDoacao = async () => {
         if (!dadosMedicamento.nome.trim()) {
@@ -79,16 +106,47 @@ export default function TelaDoacao() {
 
         setCarregando(true);
         try {
-            // Simular envio de dados
+            
             await new Promise(resolve => setTimeout(resolve, 1500));
             Alert.alert('Sucesso', 'Medicamento doado com sucesso!');
             fecharModal();
         } catch (erro) {
-            Alert.alert('Erro', 'Não foi possível realizar a doação');
+            Alert.alert(JSON.stringify(erro), 'Não foi possível realizar a doação');
         } finally {
             setCarregando(false);
         }
     };
+
+    if(cameraAtiva) {
+        return (
+        <View style={styles.cameraContainer}>
+                <CameraView 
+                  style={styles.camera} 
+                  facing={ladoCamera} 
+                  ref={cameraRef}
+                >
+                  <TouchableOpacity style={styles.botaoFecharCamera} onPress={() => setCameraAtiva(false)}>
+                    <Ionicons name="close" size={28} color="#fff" />
+                  </TouchableOpacity>
+        
+                  <View style={styles.containerBotoesCamera}>
+                    <TouchableOpacity 
+                      style={styles.botaoCirculoSecundario} 
+                      onPress={() => setLadoCamera(lado => (lado === 'back' ? 'front' : 'back'))}
+                    >
+                      <Ionicons name="camera-reverse-outline" size={24} color="#FFF" />
+                    </TouchableOpacity>
+        
+                    <TouchableOpacity style={styles.botaoDisparador} onPress={tirarFoto}>
+                      <View style={styles.circuloInternoDisparador} />
+                    </TouchableOpacity>
+        
+                    <View style={{ width: 50 }} />
+                  </View>
+                </CameraView>
+        </View>
+        )
+    }
 
     return (
         <View style={styles.containerPrincipal}>
@@ -167,7 +225,7 @@ export default function TelaDoacao() {
                 </View>
             </ScrollView>
 
-            {/* Modal para adicionar doação */}
+            
             <Modal
                 visible={modalVisivel}
                 transparent={true}
@@ -184,27 +242,34 @@ export default function TelaDoacao() {
                         </View>
 
                         <ScrollView showsVerticalScrollIndicator={false} style={styles.conteudoModal}>
-                            {/* Seção de Foto */}
+                            
                             <View style={styles.secaoFoto}>
                                 <TouchableOpacity
                                     style={styles.areaFoto}
-                                    onPress={handleAdicionarFoto}
+                                    onPress={handleAbrirCamera}
                                 >
-                                    {dadosMedicamento.foto ? (
-                                        <Image
-                                            source={{ uri: dadosMedicamento.foto }}
-                                            style={styles.fotoMedicamento}
-                                        />
-                                    ) : (
-                                        <View style={styles.placeholderFoto}>
+                                {doacao ?(
+                                    <View style={styles.placeholderFoto}>
+                                            <Image
+                                            source={doacao ? {uri: doacao}: require('../../../assets/LogoFarm.fw.png')}
+                                            resizeMode="cover"
+                                            style={styles.imagemDoacao}
+                                            />
+                                        </View>
+                                ) : (
+                                    <View style={styles.placeholderFoto}>
                                             <MaterialCommunityIcons name="camera-plus" size={48} color={cores.primaria} />
                                             <Text style={styles.textoFoto}>Adicionar Foto</Text>
                                         </View>
-                                    )}
+                                )
+                                
+                                }
+                                        
+                                    
                                 </TouchableOpacity>
                             </View>
 
-                            {/* Campo Nome do Medicamento */}
+                            
                             <View style={styles.grupoInput}>
                                 <Text style={styles.labelInput}>Nome do Medicamento *</Text>
                                 <TextInput
@@ -216,7 +281,7 @@ export default function TelaDoacao() {
                                 />
                             </View>
 
-                            {/* Campo Descrição */}
+                            
                             <View style={styles.grupoInput}>
                                 <Text style={styles.labelInput}>Descrição / Observações</Text>
                                 <TextInput
@@ -230,7 +295,7 @@ export default function TelaDoacao() {
                                 />
                             </View>
 
-                            {/* Campo Quantidade */}
+                           
                             <View style={styles.grupoInput}>
                                 <Text style={styles.labelInput}>Quantidade *</Text>
                                 <TextInput
@@ -242,7 +307,7 @@ export default function TelaDoacao() {
                                 />
                             </View>
 
-                            {/* Campo Data de Validade */}
+                         
                             <View style={styles.grupoInput}>
                                 <Text style={styles.labelInput}>Data de Validade</Text>
                                 <TextInput
@@ -257,7 +322,7 @@ export default function TelaDoacao() {
                             <View style={styles.espacoRodape} />
                         </ScrollView>
 
-                        {/* Botões de Ação */}
+                        
                         <View style={styles.rodapeModal}>
                             <TouchableOpacity
                                 style={styles.botaoVoltar}
@@ -437,7 +502,8 @@ const styles = StyleSheet.create({
         color: cores.textoSecundario,
         marginTop: 4,
     },
-    // Estilos do Modal
+    
+
     fundoModal: {
         flex: 1,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
@@ -564,4 +630,55 @@ const styles = StyleSheet.create({
         fontWeight: '600',
         color: '#fff',
     },
+    cameraContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+  },
+  camera: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingBottom: 40,
+  },
+  botaoFecharCamera: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    padding: 10,
+    borderRadius: 30,
+  },
+  containerBotoesCamera: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingHorizontal: 32,
+  },
+  botaoCirculoSecundario: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  botaoDisparador: {
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    borderWidth: 4,
+    borderColor: '#FFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  circuloInternoDisparador: {
+    width: 62,
+    height: 62,
+    borderRadius: 31,
+    backgroundColor: '#FFF',
+  },
+  imagemDoacao: {
+    width: 250,
+    height: 250,
+    borderRadius: 45
+  }
 });
