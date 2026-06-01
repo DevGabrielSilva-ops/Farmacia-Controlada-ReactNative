@@ -7,9 +7,14 @@ import {
   StyleSheet,
   Alert,
   FlatList,
+  Modal,
+  Image,
+  TextInput,
+  ActivityIndicator,
+  ListRenderItem
 } from 'react-native';
 import { useRouter } from 'expo-router';
-import { MaterialCommunityIcons } from '@expo/vector-icons';
+import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
 
 const cores = {
   primaria: '#72CAA5',
@@ -24,29 +29,55 @@ const cores = {
   fundoLeve: '#F9FAFB',
 };
 
+interface Farmacias {
+      id: string,
+      nome:string,
+      endereco: string,
+      distancia:string,
+      emEstoque: boolean,
+      telefone: string,
+      horario: string,
+
+}
+
+interface InfoAdicionais {
+      id: string,
+      titulo: string,
+      conteudo: string,
+}
+
+
 export default function DetalhesMedicamento() {
   const router = useRouter();
   const [medicamentoAdicionado, setMedicamentoAdicionado] = useState(false);
+  const [modalAgendamentoVisivel, setModalAgendamentoVisivel] = useState(false);
+  const [carregandoAgendamento, setCarregandoAgendamento] = useState(false);
+  const [dadosReceita, setDadosReceita] = useState({
+    fotoReceita: null,
+    crmMedico: '',
+    nomeMedico: '',
+    nomePaciente: '',
+    dataReceita: '',
+    observacoes: '',
+  });
 
   const medicamento = {
     id: '1',
     nome: 'Dipirona 500mg',
     laboratorio: 'Laboratório A',
     tipo: 'Analgésico',
-    preco: 'R$ 12,50',
-    precoComDesconto: 'R$ 10,50',
     descricao:
       'A Dipirona é um analgésico e antitérmico utilizado no tratamento da dor e febre. Indicada para dores leves a moderadas.',
     dosagem: '500mg',
     forma: 'Comprimido',
-    emestoque: true,
+    emEstoque: true,
     desconto: true,
   };
 
-  const farmaciasPróximas = [
+  const farmaciasProximas: Farmacias[] = [
     {
       id: '1',
-      nome: 'Farmácia Central SP',
+      nome: 'Farmacia Central SP',
       endereco: 'Rua das Flores, 123 - SP',
       distancia: '2.3 km',
       emEstoque: true,
@@ -55,7 +86,7 @@ export default function DetalhesMedicamento() {
     },
     {
       id: '2',
-      nome: 'Farmácia Premium',
+      nome: 'Farmacia Premium',
       endereco: 'Av. Paulista, 456 - SP',
       distancia: '5.1 km',
       emEstoque: true,
@@ -64,7 +95,7 @@ export default function DetalhesMedicamento() {
     },
     {
       id: '3',
-      nome: 'Farmácia Express',
+      nome: 'Farmacia Express',
       endereco: 'Rua da Paz, 789 - SP',
       distancia: '7.8 km',
       emEstoque: false,
@@ -73,7 +104,7 @@ export default function DetalhesMedicamento() {
     },
   ];
 
-  const informaçõesAdicionais = [
+  const informacoesAdicionais: InfoAdicionais[] = [
     {
       id: '1',
       titulo: 'Modo de Usar',
@@ -87,7 +118,7 @@ export default function DetalhesMedicamento() {
     },
     {
       id: '3',
-      titulo: 'Contraindicações',
+      titulo: 'Contraindicacoes',
       conteudo:
         'Não recomendado para menores de 3 meses, gestantes sem prescrição médica e pacientes com alergia à dipirona.',
     },
@@ -99,9 +130,61 @@ export default function DetalhesMedicamento() {
   ];
 
   const handleAgendar = () => {
-    Alert.alert('Agendar Resgate', 'Funcionalidade em desenvolvimento', [
-      { text: 'OK' },
-    ]);
+    setModalAgendamentoVisivel(true);
+  };
+
+  const fecharModalAgendamento = () => {
+    limparFormularioReceita();
+    setModalAgendamentoVisivel(false);
+  };
+
+  const limparFormularioReceita = () => {
+    setDadosReceita({
+      fotoReceita: null,
+      crmMedico: '',
+      nomeMedico: '',
+      nomePaciente: '',
+      dataReceita: '',
+      observacoes: '',
+    });
+  };
+
+  const handleAdicionarFotoReceita = () => {
+    Alert.alert('Foto da Receita', 'Selecionar da camera ou galeria');
+  };
+
+  const confirmarAgendamento = async () => {
+    if (!dadosReceita.fotoReceita) {
+      Alert.alert('Atencao', 'Por favor, anexe a foto da receita');
+      return;
+    }
+
+    if (!dadosReceita.crmMedico.trim()) {
+      Alert.alert('Atencao', 'Por favor, insira o CRM do medico');
+      return;
+    }
+
+    if (!dadosReceita.nomeMedico.trim()) {
+      Alert.alert('Atencao', 'Por favor, insira o nome do medico');
+      return;
+    }
+
+    if (!dadosReceita.nomePaciente.trim()) {
+      Alert.alert('Atencao', 'Por favor, insira o nome do paciente');
+      return;
+    }
+
+    setCarregandoAgendamento(true);
+    try {
+      
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      Alert.alert('Sucesso', 'Agendamento realizado com sucesso!');
+      fecharModalAgendamento();
+    } catch (erro) {
+      Alert.alert(JSON.stringify(erro), 'Nao foi possivel realizar o agendamento');
+    } finally {
+      setCarregandoAgendamento(false);
+    }
   };
 
   const handleAdicionarFavorito = () => {
@@ -114,178 +197,287 @@ export default function DetalhesMedicamento() {
     );
   };
 
-  const renderFarmacia = ({ item }) => (
-    <View style={estilos.cartaoFarmacia}>
-      <View style={estilos.headerFarmacia}>
-        <View style={estilos.grupoFarmacia}>
-          <Text style={estilos.nomeFarmacia}>{item.nome}</Text>
-          <Text style={estilos.enderecoFarmacia}>
+  const renderFarmacia: ListRenderItem<Farmacias> = ({ item }) => (
+    <View style={styles.cartaoFarmacia}>
+      <View style={styles.headerFarmacia}>
+        <View style={styles.grupoFarmacia}>
+          <Text style={styles.nomeFarmacia}>{item.nome}</Text>
+          <Text style={styles.enderecoFarmacia}>
             <MaterialCommunityIcons name="map-marker" size={12} color={cores.primaria} /> {item.endereco}
           </Text>
         </View>
-        <View style={estilos.badgeDistancia}>
+        <View style={styles.badgeDistancia}>
           <MaterialCommunityIcons name="near-me" size={12} color={cores.fundoPagina} />
-          <Text style={estilos.textoDistancia}>{item.distancia}</Text>
+          <Text style={styles.textoDistancia}>{item.distancia}</Text>
         </View>
       </View>
 
-      <View style={estilos.linhaInfoFarmacia}>
-        <View style={estilos.infoFarmacia}>
-          <Text style={estilos.labelInfoFarmacia}>Telefone</Text>
-          <Text style={estilos.valorInfoFarmacia}>{item.telefone}</Text>
+      <View style={styles.linhaInfoFarmacia}>
+        <View style={styles.infoFarmacia}>
+          <Text style={styles.labelInfoFarmacia}>Telefone</Text>
+          <Text style={styles.valorInfoFarmacia}>{item.telefone}</Text>
         </View>
-        <View style={estilos.infoFarmacia}>
-          <Text style={estilos.labelInfoFarmacia}>Horário</Text>
-          <Text style={estilos.valorInfoFarmacia}>{item.horario}</Text>
+        <View style={styles.infoFarmacia}>
+          <Text style={styles.labelInfoFarmacia}>Horario</Text>
+          <Text style={styles.valorInfoFarmacia}>{item.horario}</Text>
         </View>
       </View>
 
       {!item.emEstoque && (
-        <View style={estilos.avisoSemEstoque}>
+        <View style={styles.avisoSemEstoque}>
           <MaterialCommunityIcons name="alert-circle-outline" size={14} color={cores.vermelhaDestruir} />
-          <Text style={estilos.textoAvisoSemEstoque}>Atualmente sem estoque</Text>
+          <Text style={styles.textoAvisoSemEstoque}>Atualmente sem estoque</Text>
         </View>
       )}
 
-      <View style={estilos.linhaAcoesFarmacia}>
-        <TouchableOpacity style={estilos.botaoMapa}>
+      <View style={styles.linhaAcoesFarmacia}>
+        <TouchableOpacity style={styles.botaoMapa}>
           <MaterialCommunityIcons name="map" size={16} color={cores.primaria} />
-          <Text style={estilos.textoAcaoMapa}>Mapa</Text>
+          <Text style={styles.textoAcaoMapa}>Mapa</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={estilos.botaoLigar} disabled={!item.emEstoque}>
+        <TouchableOpacity style={styles.botaoLigar} disabled={!item.emEstoque}>
           <MaterialCommunityIcons name="phone" size={16} color={cores.fundoPagina} />
-          <Text style={estilos.textoAcaoLigar}>Ligar</Text>
+          <Text style={styles.textoAcaoLigar}>Ligar</Text>
         </TouchableOpacity>
       </View>
     </View>
   );
 
-  const renderInformacao = ({ item }) => (
-    <View style={estilos.cartaoInformacao}>
-      <Text style={estilos.tituloInformacao}>{item.titulo}</Text>
-      <Text style={estilos.conteudoInformacao}>{item.conteudo}</Text>
+  const renderInformacao: ListRenderItem<InfoAdicionais> = ({ item }) => (
+    <View style={styles.cartaoInformacao}>
+      <Text style={styles.tituloInformacao}>{item.titulo}</Text>
+      <Text style={styles.conteudoInformacao}>{item.conteudo}</Text>
     </View>
   );
 
   return (
-    <ScrollView style={estilos.containerPrincipal} showsVerticalScrollIndicator={false}>
-      {/* Header */}
-      <View style={estilos.headerPagina}>
-        <TouchableOpacity style={estilos.botaoVoltar} onPress={() => router.back()}>
-          <MaterialCommunityIcons name="arrow-left" size={24} color={cores.fundoPagina} />
-        </TouchableOpacity>
-        <Text style={estilos.tituloPagina}>Detalhes</Text>
-        <TouchableOpacity style={estilos.botaoFavorito} onPress={handleAdicionarFavorito}>
-          <MaterialCommunityIcons
-            name={medicamentoAdicionado ? 'heart' : 'heart-outline'}
-            size={24}
-            color={cores.fundoPagina}
-          />
-        </TouchableOpacity>
-      </View>
+    <>
+      <ScrollView style={styles.containerPrincipal} showsVerticalScrollIndicator={false}>
 
-      {/* Informações Principais */}
-      <View style={estilos.secaoInfo}>
-        <Text style={estilos.nomeMedicamento}>{medicamento.nome}</Text>
-        <Text style={estilos.laboratorioInfo}>{medicamento.laboratorio}</Text>
-
-        <View style={estilos.linhaPreco}>
-          <View>
-            {medicamento.desconto && (
-              <Text style={estilos.precoOriginal}>De {medicamento.preco}</Text>
-            )}
-            <Text style={estilos.preco}>{medicamento.desconto ? medicamento.precoComDesconto : medicamento.preco}</Text>
-          </View>
-
-          {medicamento.desconto && (
-            <View style={estilos.badgeDescontoGrande}>
-              <MaterialCommunityIcons name="tag-discount" size={16} color={cores.vermelhaDestruir} />
-              <Text style={estilos.textoDescontoGrande}>20% OFF</Text>
-            </View>
-          )}
-        </View>
-
-        <View style={estilos.linhaCaracteristicas}>
-          <View style={estilos.caracteristica}>
-            <MaterialCommunityIcons name="pill" size={16} color={cores.primaria} />
-            <Text style={estilos.textoCaracteristica}>{medicamento.dosagem}</Text>
-          </View>
-          <View style={estilos.caracteristica}>
-            <MaterialCommunityIcons name="capsule" size={16} color={cores.primaria} />
-            <Text style={estilos.textoCaracteristica}>{medicamento.forma}</Text>
-          </View>
-          <View style={estilos.caracteristica}>
+        <View style={styles.headerPagina}>
+          <TouchableOpacity style={styles.botaoVoltar} onPress={() => router.back()}>
+            <MaterialCommunityIcons name="arrow-left" size={24} color={cores.fundoPagina} />
+          </TouchableOpacity>
+          <Text style={styles.tituloPagina}>Detalhes</Text>
+          <TouchableOpacity style={styles.botaoFavorito} onPress={handleAdicionarFavorito}>
             <MaterialCommunityIcons
-              name={medicamento.emestoque ? 'check-circle' : 'close-circle'}
-              size={16}
-              color={medicamento.emestoque ? cores.verdeSuccesso : cores.vermelhaDestruir}
+              name={medicamentoAdicionado ? 'heart' : 'heart-outline'}
+              size={24}
+              color={cores.fundoPagina}
             />
-            <Text style={estilos.textoCaracteristica}>
-              {medicamento.emestoque ? 'Em estoque' : 'Sem estoque'}
-            </Text>
+          </TouchableOpacity>
+        </View>
+
+
+        <View style={styles.secaoInfo}>
+          <Text style={styles.nomeMedicamento}>{medicamento.nome}</Text>
+          <Text style={styles.laboratorioInfo}>{medicamento.laboratorio}</Text>
+
+
+          <View style={styles.linhaCaracteristicas}>
+            <View style={styles.caracteristica}>
+              <MaterialCommunityIcons name="pill" size={16} color={cores.primaria} />
+              <Text style={styles.textoCaracteristica}>{medicamento.dosagem}</Text>
+            </View>
+            <View style={styles.caracteristica}>
+              <MaterialCommunityIcons name='language-typescript' size={16} color={cores.primaria} />
+              <Text style={styles.textoCaracteristica}>{medicamento.forma}</Text>
+            </View>
+            <View style={styles.caracteristica}>
+              <MaterialCommunityIcons
+                name={medicamento.emEstoque ? 'check-circle' : 'close-circle'}
+                size={16}
+                color={medicamento.emEstoque ? cores.verdeSuccesso : cores.vermelhaDestruir}
+              />
+              <Text style={styles.textoCaracteristica}>
+                {medicamento.emEstoque ? 'Em estoque' : 'Sem estoque'}
+              </Text>
+            </View>
+          </View>
+
+          <Text style={styles.descricao}>{medicamento.descricao}</Text>
+        </View>
+
+
+        <View style={styles.secaoBotoes}>
+          <TouchableOpacity style={styles.botaoPrincipal} onPress={handleAgendar}>
+            <MaterialCommunityIcons name="calendar-check" size={18} color={cores.fundoPagina} />
+            <Text style={styles.textoBotaoPrincipal}>Agendar Resgate</Text>
+          </TouchableOpacity>
+
+
+        </View>
+
+
+        <View style={styles.secao}>
+          <View style={styles.headerSecao}>
+            <MaterialCommunityIcons name="hospital-box" size={20} color={cores.primaria} />
+            <Text style={styles.tituloSecao}>Farmacias Proximas</Text>
+          </View>
+
+          <FlatList
+            data={farmaciasProximas}
+            renderItem={renderFarmacia}
+            keyExtractor={item => item.id}
+            scrollEnabled={false}
+            showsVerticalScrollIndicator={false}
+          />
+        </View>
+
+
+        <View style={styles.secao}>
+          <View style={styles.headerSecao}>
+            <MaterialCommunityIcons name="information-outline" size={20} color={cores.primaria} />
+            <Text style={styles.tituloSecao}>Informacoes</Text>
+          </View>
+
+          <FlatList
+            data={informacoesAdicionais}
+            renderItem={renderInformacao}
+            keyExtractor={item => item.id}
+            scrollEnabled={false}
+            showsVerticalScrollIndicator={false}
+          />
+        </View>
+
+        <View style={styles.espacoFinal} />
+      </ScrollView>
+
+      <Modal
+        visible={modalAgendamentoVisivel}
+        transparent={true}
+        animationType="slide"
+        onRequestClose={fecharModalAgendamento}
+      >
+        <View style={styles.fundoModal}>
+          <View style={styles.containerModalAgendamento}>
+            <View style={styles.headerModalAgendamento}>
+              <Text style={styles.tituloModalAgendamento}>Agendar Resgate</Text>
+              <TouchableOpacity onPress={fecharModalAgendamento}>
+                <Ionicons name="close" size={28} color={cores.textoPrincipal} />
+              </TouchableOpacity>
+            </View>
+
+            <ScrollView showsVerticalScrollIndicator={false} style={styles.conteudoModalAgendamento}>
+
+              <View style={styles.secaoFotoReceita}>
+                <Text style={styles.labelSecaoFoto}>Foto da Receita *</Text>
+                <TouchableOpacity
+                  style={styles.areaFotoReceita}
+                  onPress={handleAdicionarFotoReceita}
+                >
+                  {dadosReceita.fotoReceita ? (
+                    <Image
+                      source={{ uri: dadosReceita.fotoReceita }}
+                      style={styles.fotoReceita}
+                    />
+                  ) : (
+                    <View style={styles.placeholderFotoReceita}>
+                      <MaterialCommunityIcons name="file-document-outline" size={48} color={cores.primaria} />
+                      <Text style={styles.textoFotoReceita}>Anexar Receita</Text>
+                    </View>
+                  )}
+                </TouchableOpacity>
+              </View>
+
+
+              <View style={styles.grupoInputAgendamento}>
+                <Text style={styles.labelInputAgendamento}>CRM do Medico *</Text>
+                <TextInput
+                  style={styles.inputAgendamento}
+                  placeholder="Ex: 123456/SP"
+                  placeholderTextColor={cores.textoSecundario}
+                  value={dadosReceita.crmMedico}
+                  onChangeText={(texto) => setDadosReceita({ ...dadosReceita, crmMedico: texto })}
+                />
+              </View>
+
+
+              <View style={styles.grupoInputAgendamento}>
+                <Text style={styles.labelInputAgendamento}>Nome do Medico *</Text>
+                <TextInput
+                  style={styles.inputAgendamento}
+                  placeholder="Ex: Dr. João Silva"
+                  placeholderTextColor={cores.textoSecundario}
+                  value={dadosReceita.nomeMedico}
+                  onChangeText={(texto) => setDadosReceita({ ...dadosReceita, nomeMedico: texto })}
+                />
+              </View>
+
+
+              <View style={styles.grupoInputAgendamento}>
+                <Text style={styles.labelInputAgendamento}>Nome do Paciente *</Text>
+                <TextInput
+                  style={styles.inputAgendamento}
+                  placeholder="Ex: Maria Silva"
+                  placeholderTextColor={cores.textoSecundario}
+                  value={dadosReceita.nomePaciente}
+                  onChangeText={(texto) => setDadosReceita({ ...dadosReceita, nomePaciente: texto })}
+                />
+              </View>
+
+
+              <View style={styles.grupoInputAgendamento}>
+                <Text style={styles.labelInputAgendamento}>Data da Receita</Text>
+                <TextInput
+                  style={styles.inputAgendamento}
+                  placeholder="Ex: 01/06/2024"
+                  placeholderTextColor={cores.textoSecundario}
+                  value={dadosReceita.dataReceita}
+                  onChangeText={(texto) => setDadosReceita({ ...dadosReceita, dataReceita: texto })}
+                />
+              </View>
+
+
+              <View style={styles.grupoInputAgendamento}>
+                <Text style={styles.labelInputAgendamento}>Observacoes</Text>
+                <TextInput
+                  style={[styles.inputAgendamento, styles.inputMultilinhaAgendamento]}
+                  placeholder="Ex: Informações adicionais sobre o medicamento ou receita"
+                  placeholderTextColor={cores.textoSecundario}
+                  value={dadosReceita.observacoes}
+                  onChangeText={(texto) => setDadosReceita({ ...dadosReceita, observacoes: texto })}
+                  multiline={true}
+                  numberOfLines={3}
+                />
+              </View>
+
+              <View style={styles.espacoRodapeAgendamento} />
+            </ScrollView>
+
+
+            <View style={styles.rodapeModalAgendamento}>
+              <TouchableOpacity
+                style={styles.botaoCancelarAgendamento}
+                onPress={fecharModalAgendamento}
+                disabled={carregandoAgendamento}
+              >
+                <Text style={styles.textoBotaoCancelarAgendamento}>Cancelar</Text>
+              </TouchableOpacity>
+
+              <TouchableOpacity
+                style={[styles.botaoConfirmarAgendamento, carregandoAgendamento && styles.botaoDesabilitado]}
+                onPress={confirmarAgendamento}
+                disabled={carregandoAgendamento}
+              >
+                {carregandoAgendamento ? (
+                  <ActivityIndicator color="#fff" size="small" />
+                ) : (
+                  <>
+                    <MaterialCommunityIcons name="calendar-check" size={20} color="#fff" />
+                    <Text style={styles.textoBotaoConfirmarAgendamento}>Confirmar</Text>
+                  </>
+                )}
+              </TouchableOpacity>
+            </View>
           </View>
         </View>
-
-        <Text style={estilos.descricao}>{medicamento.descricao}</Text>
-      </View>
-
-      {/* Botões de Ação */}
-      <View style={estilos.secaoBotoes}>
-        <TouchableOpacity style={estilos.botaoPrincipal} onPress={handleAgendar}>
-          <MaterialCommunityIcons name="calendar-check" size={18} color={cores.fundoPagina} />
-          <Text style={estilos.textoBotaoPrincipal}>Agendar Resgate</Text>
-        </TouchableOpacity>
-
-        <TouchableOpacity style={estilos.botaoSecundario} onPress={handleAdicionarFavorito}>
-          <MaterialCommunityIcons
-            name={medicamentoAdicionado ? 'heart' : 'heart-outline'}
-            size={18}
-            color={cores.primaria}
-          />
-          <Text style={estilos.textoBotaoSecundario}>
-            {medicamentoAdicionado ? 'Adicionado' : 'Favorito'}
-          </Text>
-        </TouchableOpacity>
-      </View>
-
-      {/* Farmácias Próximas */}
-      <View style={estilos.secao}>
-        <View style={estilos.headerSecao}>
-          <MaterialCommunityIcons name="hospital-box" size={20} color={cores.primaria} />
-          <Text style={estilos.tituloSecao}>Farmácias Próximas</Text>
-        </View>
-
-        <FlatList
-          data={farmaciasPróximas}
-          renderItem={renderFarmacia}
-          keyExtractor={item => item.id}
-          scrollEnabled={false}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
-
-      {/* Informações Adicionais */}
-      <View style={estilos.secao}>
-        <View style={estilos.headerSecao}>
-          <MaterialCommunityIcons name="information-outline" size={20} color={cores.primaria} />
-          <Text style={estilos.tituloSecao}>Informações</Text>
-        </View>
-
-        <FlatList
-          data={informaçõesAdicionais}
-          renderItem={renderInformacao}
-          keyExtractor={item => item.id}
-          scrollEnabled={false}
-          showsVerticalScrollIndicator={false}
-        />
-      </View>
-
-      <View style={estilos.espacoFinal} />
-    </ScrollView>
+      </Modal>
+    </>
   );
 }
 
-const estilos = StyleSheet.create({
+const styles = StyleSheet.create({
   containerPrincipal: {
     flex: 1,
     backgroundColor: cores.fundoLeve,
@@ -328,23 +520,6 @@ const estilos = StyleSheet.create({
     color: cores.textoSecundario,
     fontWeight: '500',
     marginBottom: 12,
-  },
-  linhaPreco: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'flex-start',
-    marginBottom: 16,
-  },
-  precoOriginal: {
-    fontSize: 12,
-    color: cores.textoSecundario,
-    textDecorationLine: 'line-through',
-    marginBottom: 2,
-  },
-  preco: {
-    fontSize: 28,
-    fontWeight: '700',
-    color: cores.secundaria,
   },
   badgeDescontoGrande: {
     flexDirection: 'row',
@@ -578,5 +753,136 @@ const estilos = StyleSheet.create({
   },
   espacoFinal: {
     height: 40,
+  },
+  fundoModal: {
+    flex: 1,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'flex-end',
+  },
+  containerModalAgendamento: {
+    backgroundColor: cores.fundoPagina,
+    borderTopLeftRadius: 24,
+    borderTopRightRadius: 24,
+    maxHeight: '90%',
+    paddingTop: 0,
+  },
+  headerModalAgendamento: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
+    paddingHorizontal: 20,
+    paddingVertical: 18,
+    borderBottomWidth: 1,
+    borderBottomColor: cores.borda,
+  },
+  tituloModalAgendamento: {
+    fontSize: 22,
+    fontWeight: '700',
+    color: cores.textoPrincipal,
+  },
+  conteudoModalAgendamento: {
+    paddingHorizontal: 20,
+  },
+  secaoFotoReceita: {
+    marginVertical: 24,
+  },
+  labelSecaoFoto: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: cores.textoPrincipal,
+    marginBottom: 12,
+  },
+  areaFotoReceita: {
+    width: '100%',
+    height: 200,
+    borderRadius: 16,
+    overflow: 'hidden',
+    backgroundColor: cores.fundoLeve,
+    borderWidth: 2,
+    borderColor: cores.borda,
+    borderStyle: 'dashed',
+  },
+  fotoReceita: {
+    width: '100%',
+    height: '100%',
+    resizeMode: 'cover',
+  },
+  placeholderFotoReceita: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textoFotoReceita: {
+    fontSize: 14,
+    color: cores.primaria,
+    marginTop: 8,
+    fontWeight: '500',
+  },
+  grupoInputAgendamento: {
+    marginBottom: 18,
+  },
+  labelInputAgendamento: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: cores.textoPrincipal,
+    marginBottom: 8,
+  },
+  inputAgendamento: {
+    borderWidth: 1,
+    borderColor: cores.borda,
+    borderRadius: 12,
+    paddingHorizontal: 14,
+    paddingVertical: 12,
+    fontSize: 15,
+    color: cores.textoPrincipal,
+    backgroundColor: cores.fundoLeve,
+  },
+  inputMultilinhaAgendamento: {
+    minHeight: 100,
+    paddingTop: 12,
+    textAlignVertical: 'top',
+  },
+  espacoRodapeAgendamento: {
+    height: 20,
+  },
+  rodapeModalAgendamento: {
+    flexDirection: 'row',
+    paddingHorizontal: 20,
+    paddingVertical: 16,
+    borderTopWidth: 1,
+    borderTopColor: cores.borda,
+    gap: 12,
+  },
+  botaoCancelarAgendamento: {
+    flex: 1,
+    paddingVertical: 14,
+    borderRadius: 12,
+    borderWidth: 2,
+    borderColor: cores.borda,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  textoBotaoCancelarAgendamento: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: cores.textoPrincipal,
+  },
+  botaoConfirmarAgendamento: {
+    flex: 1,
+    backgroundColor: cores.primaria,
+    paddingVertical: 14,
+    borderRadius: 12,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 8,
+  },
+  botaoDesabilitado: {
+    opacity: 0.6,
+  },
+  textoBotaoConfirmarAgendamento: {
+    fontSize: 15,
+    fontWeight: '600',
+    color: '#fff',
   },
 });

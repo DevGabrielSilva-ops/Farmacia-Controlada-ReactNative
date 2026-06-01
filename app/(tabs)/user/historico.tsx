@@ -29,9 +29,9 @@ interface TipoInfo {
     cor: string;
 }
 
-const tipoCores: Record<'resgate' | 'compra' | 'devolucao' | 'cancelamento', TipoInfo> = {
+const tipoCores: Record<'resgate' | 'doacao' | 'devolucao' | 'cancelamento', TipoInfo> = {
     resgate: { icone: 'pill', cor: cores.verdeSuccesso },
-    compra: { icone: 'shopping-outline', cor: cores.primaria },
+    doacao: { icone: 'shopping-outline', cor: cores.primaria },
     devolucao: { icone: 'undo-variant', cor: cores.amarelaAlerta },
     cancelamento: { icone: 'close-circle', cor: cores.vermelhaDestruir },
 };
@@ -39,12 +39,11 @@ const tipoCores: Record<'resgate' | 'compra' | 'devolucao' | 'cancelamento', Tip
 interface ItemHistorico {
     id: string;
     medicamento: string;
-    tipo: 'resgate' | 'compra' | 'devolucao' | 'cancelamento';
+    tipo: 'resgate' | 'doacao' | 'devolucao' | 'cancelamento';
     quantidade: string;
     farmacia: string;
     data: string;
     hora: string;
-    preco: string;
     status: string;
     referencia: string;
 }
@@ -65,19 +64,17 @@ export default function HistoricoUsuario() {
             farmacia: 'Farmácia Central SP',
             data: '15/05/2025',
             hora: '14:30',
-            preco: 'R$ 10,50',
             status: 'Concluído',
             referencia: 'RES-2025-001',
         },
         {
             id: '2',
             medicamento: 'Amoxicilina 500mg',
-            tipo: 'compra',
+            tipo: 'doacao',
             quantidade: '21 cápsulas',
             farmacia: 'Farmácia Premium',
             data: '10/05/2025',
             hora: '10:15',
-            preco: 'R$ 45,00',
             status: 'Concluído',
             referencia: 'COM-2025-001',
         },
@@ -89,7 +86,6 @@ export default function HistoricoUsuario() {
             farmacia: 'Farmácia Express',
             data: '08/05/2025',
             hora: '09:45',
-            preco: 'Gratuito (com receita)',
             status: 'Concluído',
             referencia: 'RES-2025-002',
         },
@@ -101,7 +97,6 @@ export default function HistoricoUsuario() {
             farmacia: 'Farmácia Central SP',
             data: '05/05/2025',
             hora: '16:20',
-            preco: 'R$ 15,00 (reembolsado)',
             status: 'Concluído',
             referencia: 'DEV-2025-001',
         },
@@ -113,19 +108,17 @@ export default function HistoricoUsuario() {
             farmacia: 'Farmácia Premium',
             data: '02/05/2025',
             hora: '11:00',
-            preco: 'Cancelado',
             status: 'Cancelado',
             referencia: 'CAN-2025-001',
         },
         {
             id: '6',
             medicamento: 'Atorvastatina 20mg',
-            tipo: 'compra',
+            tipo: 'doacao',
             quantidade: '30 comprimidos',
             farmacia: 'Farmácia 24h',
             data: '28/04/2025',
             hora: '20:00',
-            preco: 'R$ 28,60',
             status: 'Concluído',
             referencia: 'COM-2025-002',
         },
@@ -137,7 +130,6 @@ export default function HistoricoUsuario() {
             farmacia: 'Farmácia Central SP',
             data: '25/04/2025',
             hora: '13:15',
-            preco: 'Gratuito (com receita)',
             status: 'Concluído',
             referencia: 'RES-2025-003',
         },
@@ -159,8 +151,8 @@ export default function HistoricoUsuario() {
         switch (tipo) {
             case 'resgate':
                 return 'Resgate com Receita';
-            case 'compra':
-                return 'Compra';
+            case 'doacao':
+                return 'Doação';
             case 'devolucao':
                 return 'Devolução';
             case 'cancelamento':
@@ -176,14 +168,14 @@ export default function HistoricoUsuario() {
 
         return (
             <TouchableOpacity
-                style={estilos.cartaoHistorico}
+                style={styles.cartaoHistorico}
                 onPress={() => toggleDetalhes(item.id)}
             >
 
-                <View style={estilos.headerHistorico}>
+                <View style={styles.headerHistorico}>
                     <View
                         style={[
-                            estilos.circuloTipo,
+                            styles.circuloTipo,
                             { backgroundColor: tipoInfo.cor + '20' },
                         ]}
                     >
@@ -194,69 +186,63 @@ export default function HistoricoUsuario() {
                         />
                     </View>
 
-                    <View style={estilos.grupoInfo}>
-                        <Text style={estilos.medicamentoHistorico}>{item.medicamento}</Text>
-                        <Text style={estilos.tipoHistorico}>{getTituloTipo(item.tipo)}</Text>
+                    <View style={styles.grupoInfo}>
+                        <Text style={styles.medicamentoHistorico}>{item.medicamento}</Text>
+                        <Text style={styles.tipoHistorico}>{getTituloTipo(item.tipo)}</Text>
                     </View>
 
-                    <View style={estilos.grupoPreco}>
+                    <View style={styles.grupoPreco}>
                         <Text style={[
-                            estilos.precoHistorico,
+                            styles.precoHistorico,
                             item.tipo === 'cancelamento' && { color: cores.textoSecundario, textDecorationLine: 'line-through' }
                         ]}>
-                            {item.preco}
                         </Text>
-                        <MaterialCommunityIcons
-                            name={historicoExpandido[item.id] ? 'chevron-up' : 'chevron-down'}
-                            size={20}
-                            color={cores.textoSecundario}
-                        />
                     </View>
                 </View>
 
 
                 {historicoExpandido[item.id] && (
-                    <View style={estilos.detalhesExpandidos}>
+                    <View style={styles.detalhesExpandidos}>
 
-                        <View style={estilos.linhaDetalhes}>
+                        <View style={styles.linhaDetalhes}>
                             <MaterialCommunityIcons name="calendar-outline" size={14} color={cores.textoSecundario} />
-                            <Text style={estilos.labelDetalhes}>Data</Text>
-                            <Text style={estilos.valorDetalhes}>{item.data} às {item.hora}</Text>
+                            <Text style={styles.labelDetalhes}>Data</Text>
+                            <Text style={styles.valorDetalhes}>{item.data} às {item.hora}</Text>
                         </View>
 
 
-                        <View style={estilos.linhaDetalhes}>
+                        <View style={styles.linhaDetalhes}>
                             <MaterialCommunityIcons name="hospital-box" size={14} color={cores.textoSecundario} />
-                            <Text style={estilos.labelDetalhes}>Farmácia</Text>
-                            <Text style={estilos.valorDetalhes}>{item.farmacia}</Text>
+                            <Text style={styles.labelDetalhes}>Farmácia</Text>
+                            <Text style={styles.valorDetalhes}>{item.farmacia}</Text>
                         </View>
 
 
                         {item.quantidade !== '-' && (
-                            <View style={estilos.linhaDetalhes}>
+                            <View style={styles.linhaDetalhes}>
                                 <MaterialCommunityIcons name="pill" size={14} color={cores.textoSecundario} />
-                                <Text style={estilos.labelDetalhes}>Quantidade</Text>
-                                <Text style={estilos.valorDetalhes}>{item.quantidade}</Text>
+                                <Text style={styles.labelDetalhes}>Quantidade</Text>
+                                <Text style={styles.valorDetalhes}>{item.quantidade}</Text>
                             </View>
                         )}
 
 
-                        <View style={estilos.linhaDetalhes}>
+                        <View style={styles.linhaDetalhes}>
                             <MaterialCommunityIcons name="barcode" size={14} color={cores.textoSecundario} />
-                            <Text style={estilos.labelDetalhes}>Referência</Text>
-                            <Text style={estilos.valorDetalhes}>{item.referencia}</Text>
+                            <Text style={styles.labelDetalhes}>Referência</Text>
+                            <Text style={styles.valorDetalhes}>{item.referencia}</Text>
                         </View>
 
 
-                        <View style={estilos.linhaDetalhes}>
+                        <View style={styles.linhaDetalhes}>
                             <MaterialCommunityIcons
                                 name={item.status === 'Concluído' ? 'check-circle' : 'close-circle'}
                                 size={14}
                                 color={item.status === 'Concluído' ? cores.verdeSuccesso : cores.vermelhaDestruir}
                             />
-                            <Text style={estilos.labelDetalhes}>Status</Text>
+                            <Text style={styles.labelDetalhes}>Status</Text>
                             <Text style={[
-                                estilos.valorDetalhes,
+                                styles.valorDetalhes,
                                 {
                                     color: item.status === 'Concluído' ? cores.verdeSuccesso : cores.vermelhaDestruir,
                                     fontWeight: '600',
@@ -267,22 +253,22 @@ export default function HistoricoUsuario() {
                         </View>
 
 
-                        <View style={estilos.linhaAcoes}>
-                            <TouchableOpacity style={estilos.botaoDetalhes}>
+                        <View style={styles.linhaAcoes}>
+                            <TouchableOpacity style={styles.botaoDetalhes}>
                                 <MaterialCommunityIcons name="information-outline" size={14} color={cores.primaria} />
-                                <Text style={estilos.textoDetalhes}>Detalhes</Text>
+                                <Text style={styles.textoDetalhes}>Detalhes</Text>
                             </TouchableOpacity>
 
-                            {item.tipo === 'compra' && (
-                                <TouchableOpacity style={estilos.botaoNota}>
+                            {item.tipo === 'doacao' && (
+                                <TouchableOpacity style={styles.botaoNota}>
                                     <MaterialCommunityIcons name="file-document-outline" size={14} color={cores.primaria} />
-                                    <Text style={estilos.textoNota}>Nota</Text>
+                                    <Text style={styles.textoNota}>Nota</Text>
                                 </TouchableOpacity>
                             )}
 
-                            <TouchableOpacity style={estilos.botaoCompartilhar}>
+                            <TouchableOpacity style={styles.botaoCompartilhar}>
                                 <MaterialCommunityIcons name="share-outline" size={14} color={cores.fundoPagina} />
-                                <Text style={estilos.textoCompartilhar}>Compartilhar</Text>
+                                <Text style={styles.textoCompartilhar}>Compartilhar</Text>
                             </TouchableOpacity>
                         </View>
                     </View>
@@ -292,56 +278,56 @@ export default function HistoricoUsuario() {
     };
 
     return (
-        <View style={estilos.containerPrincipal}>
+        <View style={styles.containerPrincipal}>
 
-            <View style={estilos.header}>
+            <View style={styles.header}>
                 <Image
                     source={require('../../../assets/LogoFarm.fw.png')}
-                    style={estilos.logo}
+                    style={styles.logo}
                     resizeMode="contain"
                 />
 
-                <View style={estilos.acaoHeader}>
-                    <TouchableOpacity style={estilos.buttonIcone} accessibilityLabel="Notificações">
+                <View style={styles.acaoHeader}>
+                    <TouchableOpacity style={styles.buttonIcone} accessibilityLabel="Notificações">
                         <Ionicons name="notifications-outline" size={28} color="#fff" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={estilos.buttonPerfil} onPress={() => router.push('/(tabs)/user/perfil')} accessibilityLabel="Perfil do usuário">
+                    <TouchableOpacity style={styles.buttonPerfil} onPress={() => router.push('/(tabs)/user/perfil')} accessibilityLabel="Perfil do usuário">
                         <Ionicons name="person-circle-outline" size={32} color="#fff" />
                     </TouchableOpacity>
                 </View>
             </View>
 
-            <View style={estilos.tituloSessao}>
-                <Text style={estilos.tituloPrincipal}>Historico</Text>
-                <Text style={estilos.subTitulo}>Veja aqui seus históricos de medicamentos</Text>
+            <View style={styles.tituloSessao}>
+                <Text style={styles.tituloPrincipal}>Historico</Text>
+                <Text style={styles.subTitulo}>Veja aqui seus históricos de medicamentos</Text>
             </View>
 
             <View style={{ maxHeight: 60 }}>
                 <ScrollView
                     horizontal
                     showsHorizontalScrollIndicator={false}
-                    style={estilos.containerFiltros}
-                    contentContainerStyle={estilos.contentFiltros}
+                    style={styles.containerFiltros}
+                    contentContainerStyle={styles.contentFiltros}
                 >
                     {[
                         { id: 'todos', label: 'Todos' },
                         { id: 'resgate', label: 'Resgates' },
-                        { id: 'compra', label: 'Compras' },
+                        { id: 'doacao', label: 'Doação' },
                         { id: 'devolucao', label: 'Devoluções' },
                     ].map(filtro => (
                         <TouchableOpacity
                             key={filtro.id}
                             style={[
-                                estilos.filtro,
-                                filtroTipo === filtro.id && estilos.filtroSelecionado,
+                                styles.filtro,
+                                filtroTipo === filtro.id && styles.filtroSelecionado,
                             ]}
                             onPress={() => setFiltroTipo(filtro.id)}
                         >
                             <Text
                                 style={[
-                                    estilos.textoFiltro,
-                                    filtroTipo === filtro.id && estilos.textoFiltroSelecionado,
+                                    styles.textoFiltro,
+                                    filtroTipo === filtro.id && styles.textoFiltroSelecionado,
                                 ]}
                             >
                                 {filtro.label}
@@ -357,34 +343,34 @@ export default function HistoricoUsuario() {
                     data={historicoFiltrado}
                     renderItem={renderItem}
                     keyExtractor={item => item.id}
-                    contentContainerStyle={estilos.listaContent}
+                    contentContainerStyle={styles.listaContent}
                     showsVerticalScrollIndicator={false}
                 />
             ) : (
-                <View style={estilos.estadoVazio}>
+                <View style={styles.estadoVazio}>
                     <MaterialCommunityIcons name="history" size={48} color={cores.textoSecundario} />
-                    <Text style={estilos.textoVazio}>Nenhum registro encontrado</Text>
+                    <Text style={styles.textoVazio}>Nenhum registro encontrado</Text>
                 </View>
             )}
 
 
-            <View style={estilos.secaoEstatisticas}>
-                <View style={estilos.cartaoEstatistica}>
-                    <View style={estilos.grupoEstat}>
-                        <Text style={estilos.numeroEstat}>{historico.length}</Text>
-                        <Text style={estilos.labelEstat}>Total de Transações</Text>
+            <View style={styles.secaoEstatisticas}>
+                <View style={styles.cartaoEstatistica}>
+                    <View style={styles.grupoEstat}>
+                        <Text style={styles.numeroEstat}>{historico.length}</Text>
+                        <Text style={styles.labelEstat}>Total de Transações</Text>
                     </View>
-                    <View style={estilos.grupoEstat}>
-                        <Text style={estilos.numeroEstat}>
+                    <View style={styles.grupoEstat}>
+                        <Text style={styles.numeroEstat}>
                             {historico.filter(h => h.status === 'Concluído').length}
                         </Text>
-                        <Text style={estilos.labelEstat}>Concluídas</Text>
+                        <Text style={styles.labelEstat}>Concluídas</Text>
                     </View>
-                    <View style={estilos.grupoEstat}>
-                        <Text style={estilos.numeroEstat}>
+                    <View style={styles.grupoEstat}>
+                        <Text style={styles.numeroEstat}>
                             {historico.filter(h => h.tipo === 'resgate').length}
                         </Text>
-                        <Text style={estilos.labelEstat}>Resgates</Text>
+                        <Text style={styles.labelEstat}>Resgates</Text>
                     </View>
                 </View>
             </View>
@@ -392,7 +378,7 @@ export default function HistoricoUsuario() {
     );
 }
 
-const estilos = StyleSheet.create({
+const styles = StyleSheet.create({
     containerPrincipal: {
         flex: 1,
         backgroundColor: cores.fundoLeve,

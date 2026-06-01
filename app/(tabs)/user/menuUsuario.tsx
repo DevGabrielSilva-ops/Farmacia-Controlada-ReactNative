@@ -25,7 +25,7 @@ const cores = {
 };
 
 
-interface cartoes {
+interface card {
     id: string;
     titulo: string;
     descricao: string;
@@ -70,18 +70,9 @@ export default function MenuUsuario() {
         farmaciasFavoritas: 2,
     };
 
-    const cartoesPrincipais: cartoes[] = [
+    const cardPrincipais: card[] = [
         {
             id: '1',
-            titulo: 'Minhas Doações',
-            descricao: 'Lista de doações realizadas',
-            numero: dadosUsuario.receitas,
-            icone: 'pill',
-            cor: cores.verdeSuccesso,
-            rota: '/(tabs)/user/doacao',
-        },
-        {
-            id: '2',
             titulo: 'Medicamentos',
             descricao: 'Disponíveis perto',
             numero: dadosUsuario.medicamentos,
@@ -89,6 +80,7 @@ export default function MenuUsuario() {
             cor: cores.primaria,
             rota: '/(tabs)/user/medicamentos',
         },
+        
     ];
 
     const acoesRapidas: AcaoRapida[] = [
@@ -99,13 +91,22 @@ export default function MenuUsuario() {
             icone: 'magnify',
             rota: '/(tabs)/user/medicamentos',
         },
+        
         {
-            id: '3',
+            id: '2',
             label: 'Perfil',
             descricao: 'Meus dados',
             icone: 'account-circle-outline',
             rota: '/(tabs)/user/perfil',
         },
+
+         {
+            id: '3',
+            label: 'Doação',
+            descricao: 'Realizar Doações',
+            icone: 'heart',
+            rota: '/(tabs)/user/perfil',
+        }
     ];
 
     const atividadeRecente = [
@@ -138,20 +139,20 @@ export default function MenuUsuario() {
         },
     ];
 
-    const renderCartaoPrincipal = ({ item }: { item: cartoes }) => (
+    const renderCartaoPrincipal = ({ item }: { item: card }) => (
         <TouchableOpacity
-            style={estilos.cartaoPrincipal}
+            style={styles.cartaoPrincipal}
             onPress={() => router.push(item.rota)}
         >
-            <View style={[estilos.iconePrincipal, { backgroundColor: item.cor + '20' }]}>
+            <View style={[styles.iconePrincipal, { backgroundColor: item.cor + '20' }]}>
                 <MaterialCommunityIcons name={item.icone} size={28} color={item.cor} />
             </View>
-            <View style={estilos.grupoTexto}>
-                <Text style={estilos.tituloCarta}>{item.titulo}</Text>
-                <Text style={estilos.descricaoCarta}>{item.descricao}</Text>
+            <View style={styles.grupoTexto}>
+                <Text style={styles.tituloCarta}>{item.titulo}</Text>
+                <Text style={styles.descricaoCarta}>{item.descricao}</Text>
             </View>
-            <View style={estilos.grupoNumero}>
-                <Text style={estilos.numeroDestaque}>{item.numero}</Text>
+            <View style={styles.grupoNumero}>
+                <Text style={styles.numeroDestaque}>{item.numero}</Text>
                 <MaterialCommunityIcons name="chevron-right" size={20} color={cores.textoSecundario} />
             </View>
         </TouchableOpacity>
@@ -159,67 +160,67 @@ export default function MenuUsuario() {
 
     const renderAcaoRapida = ({ item }: { item: AcaoRapida }) => (
         <TouchableOpacity
-            style={estilos.botaoAcaoRapida}
+            style={styles.botaoAcaoRapida}
             onPress={() => router.push(item.rota)}
         >
-            <View style={estilos.iconeAcao}>
+            <View style={styles.iconeAcao}>
                 <MaterialCommunityIcons name={item.icone} size={24} color={cores.primaria} />
             </View>
-            <Text style={estilos.labelAcao}>{item.label}</Text>
-            <Text style={estilos.descricaoAcao}>{item.descricao}</Text>
+            <Text style={styles.labelAcao}>{item.label}</Text>
+            <Text style={styles.descricaoAcao}>{item.descricao}</Text>
         </TouchableOpacity>
     );
 
     const renderAtividadeRecente = ({ item }: { item: Atividade }) => (
-        <View style={estilos.cartaoAtividade}>
+        <View style={styles.cartaoAtividade}>
             <View style={[
-                estilos.iconeAtividade,
+                styles.iconeAtividade,
                 { backgroundColor: item.cor + '20' }
             ]}>
                 <MaterialCommunityIcons name={item.icone} size={18} color={item.cor} />
             </View>
-            <View style={estilos.grupoAtividade}>
-                <Text style={estilos.medicamentoAtividade}>{item.medicamento}</Text>
-                <Text style={estilos.textoAtividadeSecundaria}>
+            <View style={styles.grupoAtividade}>
+                <Text style={styles.medicamentoAtividade}>{item.medicamento}</Text>
+                <Text style={styles.textoAtividadeSecundaria}>
                     <MaterialCommunityIcons name="hospital-box" size={12} color={cores.textoSecundario} /> {item.farmacia}
                 </Text>
             </View>
-            <Text style={estilos.dataAtividade}>{item.data}</Text>
+            <Text style={styles.dataAtividade}>{item.data}</Text>
         </View>
     );
 
     return (
         <ScrollView
-            style={estilos.containerPrincipal}
+            style={styles.containerPrincipal}
             showsVerticalScrollIndicator={false}
         >
-            <View style={estilos.header}>
+            <View style={styles.header}>
                 <Image
                     source={require('../../../assets/LogoFarm.fw.png')}
-                    style={estilos.logo}
+                    style={styles.logo}
                     resizeMode="contain"
                 />
 
-                <View style={estilos.acaoHeader}>
-                    <TouchableOpacity style={estilos.buttonIcone} accessibilityLabel="Notificações">
+                <View style={styles.acaoHeader}>
+                    <TouchableOpacity style={styles.buttonIcone} accessibilityLabel="Notificações">
                         <Ionicons name="notifications-outline" size={28} color="#fff" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={estilos.buttonPerfil} onPress={() => router.push('/(tabs)/user/perfil')} accessibilityLabel="Perfil do usuário">
+                    <TouchableOpacity style={styles.buttonPerfil} onPress={() => router.push('/(tabs)/user/perfil')} accessibilityLabel="Perfil do usuário">
                         <Ionicons name="person-circle-outline" size={32} color="#fff" />
                     </TouchableOpacity>
                 </View>
             </View>
 
-            <View style={estilos.tituloSessao}>
-                <Text style={estilos.tituloPrincipal}>Olá, {dadosUsuario.nome}</Text>
-                <Text style={estilos.subTitulo}>Seja Bem-Vindo ao menu inicial</Text>
+            <View style={styles.tituloSessao}>
+                <Text style={styles.tituloPrincipal}>Olá, {dadosUsuario.nome}</Text>
+                <Text style={styles.subTitulo}>Seja Bem-Vindo ao menu inicial</Text>
             </View>
 
-            <View style={estilos.secaoCartoes}>
-                <Text style={estilos.tituloSecao}>Resumo</Text>
+            <View style={styles.secaoCartoes}>
+                <Text style={styles.tituloSecao}>Resumo</Text>
                 <FlatList
-                    data={cartoesPrincipais}
+                    data={cardPrincipais}
                     renderItem={renderCartaoPrincipal}
                     keyExtractor={item => item.id}
                     scrollEnabled={false}
@@ -227,24 +228,24 @@ export default function MenuUsuario() {
                 />
             </View>
 
-            <View style={estilos.secaoAcoes}>
-                <Text style={estilos.tituloSecao}>Ações Rápidas</Text>
+            <View style={styles.secaoAcoes}>
+                <Text style={styles.tituloSecao}>Ações Rápidas</Text>
                 <FlatList
                     data={acoesRapidas}
                     renderItem={renderAcaoRapida}
                     keyExtractor={item => item.id}
                     numColumns={2}
-                    columnWrapperStyle={estilos.gridWrapper}
+                    columnWrapperStyle={styles.gridWrapper}
                     scrollEnabled={false}
                     showsVerticalScrollIndicator={false}
                 />
             </View>
 
-            <View style={estilos.secaoAtividade}>
-                <View style={estilos.headerAtividade}>
-                    <Text style={estilos.tituloSecao}>Atividade Recente</Text>
+            <View style={styles.secaoAtividade}>
+                <View style={styles.headerAtividade}>
+                    <Text style={styles.tituloSecao}>Atividade Recente</Text>
                     <TouchableOpacity onPress={() => router.push('/(tabs)/user/historico')}>
-                        <Text style={estilos.linkVerTudo}>Ver tudo</Text>
+                        <Text style={styles.linkVerTudo}>Ver tudo</Text>
                     </TouchableOpacity>
                 </View>
 
@@ -257,9 +258,9 @@ export default function MenuUsuario() {
                         showsVerticalScrollIndicator={false}
                     />
                 ) : (
-                    <View style={estilos.vazio}>
+                    <View style={styles.vazio}>
                         <MaterialCommunityIcons name="history" size={40} color={cores.textoSecundario} />
-                        <Text style={estilos.textoVazio}>Nenhuma atividade recente</Text>
+                        <Text style={styles.textoVazio}>Nenhuma atividade recente</Text>
                     </View>
                 )}
             </View>
@@ -267,7 +268,7 @@ export default function MenuUsuario() {
     );
 }
 
-const estilos = StyleSheet.create({
+const styles = StyleSheet.create({
     containerPrincipal: {
         flex: 1,
         backgroundColor: cores.fundoLeve,

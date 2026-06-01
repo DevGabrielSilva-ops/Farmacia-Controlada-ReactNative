@@ -19,10 +19,8 @@ interface Medicamento {
     nome: string;
     laboratorio: string;
     tipo: string;
-    preco: string;
     farmaciasPróximas: number;
     emEstoque: boolean;
-    desconto: boolean;
 }
 
 const cores = {
@@ -50,60 +48,48 @@ export default function MedicamentosUsuario() {
             nome: 'Dipirona 500mg',
             laboratorio: 'Laboratório A',
             tipo: 'Analgésico',
-            preco: 'R$ 12,50',
             farmaciasPróximas: 3,
             emEstoque: true,
-            desconto: false,
         },
         {
             id: '2',
             nome: 'Amoxicilina 500mg',
             laboratorio: 'Laboratório B',
             tipo: 'Antibiótico',
-            preco: 'R$ 45,00',
             farmaciasPróximas: 2,
             emEstoque: true,
-            desconto: true,
         },
         {
             id: '3',
             nome: 'Losartana 50mg',
             laboratorio: 'Laboratório C',
             tipo: 'Anti-hipertensivo',
-            preco: 'R$ 35,90',
             farmaciasPróximas: 5,
             emEstoque: true,
-            desconto: false,
         },
         {
             id: '4',
             nome: 'Omeprazol 20mg',
             laboratorio: 'Laboratório D',
             tipo: 'Protetor Gástrico',
-            preco: 'R$ 18,75',
             farmaciasPróximas: 1,
             emEstoque: false,
-            desconto: false,
         },
         {
             id: '5',
             nome: 'Metformina 500mg',
             laboratorio: 'Laboratório A',
             tipo: 'Antidiabético',
-            preco: 'R$ 22,30',
             farmaciasPróximas: 4,
             emEstoque: true,
-            desconto: true,
         },
         {
             id: '6',
             nome: 'Atorvastatina 20mg',
             laboratorio: 'Laboratório E',
             tipo: 'Hipolipemiante',
-            preco: 'R$ 28,60',
             farmaciasPróximas: 2,
             emEstoque: true,
-            desconto: false,
         },
     ];
 
@@ -119,83 +105,72 @@ export default function MedicamentosUsuario() {
 
     const renderMedicamento: ListRenderItem<Medicamento> = ({ item }) => (
         <TouchableOpacity
-            style={estilos.cartaoMedicamento}
+            style={styles.cartaoMedicamento}
             onPress={() => router.push(`/(tabs)/user/detalhesMedicamento?id=${item.id}`)}
         >
 
-            <View style={estilos.headerMedicamento}>
-                <View style={estilos.grupoNome}>
-                    <Text style={estilos.nomeMedicamento}>{item.nome}</Text>
-                    <Text style={estilos.laboratorioMedicamento}>{item.laboratorio}</Text>
+            <View style={styles.headerMedicamento}>
+                <View style={styles.grupoNome}>
+                    <Text style={styles.nomeMedicamento}>{item.nome}</Text>
+                    <Text style={styles.laboratorioMedicamento}>{item.laboratorio}</Text>
                 </View>
-                {item.desconto && (
-                    <View style={estilos.badgeDesconto}>
-
-                        <MaterialCommunityIcons name="tag-outline" size={12} color={cores.vermelhaDestruir} />
-                        <Text style={estilos.textoDesconto}>DESCONTO</Text>
-                    </View>
-                )}
             </View>
 
 
-            <View style={estilos.linhaSecundaria}>
-                <View style={estilos.badgeTipo}>
-                    <Text style={estilos.textoTipo}>{item.tipo}</Text>
+            <View style={styles.linhaSecundaria}>
+                <View style={styles.badgeTipo}>
+                    <Text style={styles.textoTipo}>{item.tipo}</Text>
                 </View>
                 {!item.emEstoque && (
-                    <View style={estilos.badgeSemEstoque}>
+                    <View style={styles.badgeSemEstoque}>
                         <MaterialCommunityIcons name="alert-circle-outline" size={12} color={cores.vermelhaDestruir} />
-                        <Text style={estilos.textoSemEstoque}>Sem estoque</Text>
+                        <Text style={styles.textoSemEstoque}>Sem estoque</Text>
                     </View>
                 )}
             </View>
 
 
-            <View style={estilos.rodape}>
-                <View style={estilos.grupPreco}>
-                    <Text style={estilos.labelPreco}>Preço</Text>
-                    <Text style={estilos.preco}>{item.preco}</Text>
-                </View>
-                <View style={estilos.grupFarmacia}>
+            <View style={styles.rodape}>
+                <View style={styles.grupFarmacia}>
                     <MaterialCommunityIcons name="map-marker-outline" size={14} color={cores.primaria} />
-                    <Text style={estilos.textoFarmacia}>{item.farmaciasPróximas} farmácias</Text>
+                    <Text style={styles.textoFarmacia}>{item.farmaciasPróximas} farmácias</Text>
                 </View>
             </View>
         </TouchableOpacity>
     );
 
     return (
-        <View style={estilos.containerPrincipal}>
-             <View style={estilos.header}>
+        <View style={styles.containerPrincipal}>
+             <View style={styles.header}>
                 <Image
                     source={require('../../../assets/LogoFarm.fw.png')}
-                    style={estilos.logo}
+                    style={styles.logo}
                     resizeMode="contain"
                 />
 
-                <View style={estilos.acaoHeader}>
-                    <TouchableOpacity style={estilos.buttonIcone} accessibilityLabel="Notificações">
+                <View style={styles.acaoHeader}>
+                    <TouchableOpacity style={styles.buttonIcone} accessibilityLabel="Notificações">
                         <Ionicons name="notifications-outline" size={28} color="#fff" />
                     </TouchableOpacity>
 
-                    <TouchableOpacity style={estilos.buttonPerfil} onPress={() => router.push('/(tabs)/user/perfil')} accessibilityLabel="Perfil do usuário">
+                    <TouchableOpacity style={styles.buttonPerfil} onPress={() => router.push('/(tabs)/user/perfil')} accessibilityLabel="Perfil do usuário">
                         <Ionicons name="person-circle-outline" size={32} color="#fff" />
                     </TouchableOpacity>
                 </View>
             </View>
 
-            <View style={estilos.tituloSessao}>
-                <Text style={estilos.tituloPrincipal}>Medicamentos</Text>
-                <Text style={estilos.subTitulo}>Confira aqui os medicamentos disponíveis para doação</Text>
+            <View style={styles.tituloSessao}>
+                <Text style={styles.tituloPrincipal}>Medicamentos</Text>
+                <Text style={styles.subTitulo}>Confira aqui os medicamentos disponíveis para doação</Text>
             </View>
             
 
 
-            <View style={estilos.containerBusca}>
-                <View style={estilos.campoBusca}>
+            <View style={styles.containerBusca}>
+                <View style={styles.campoBusca}>
                     <MaterialCommunityIcons name="magnify" size={20} color={cores.textoSecundario} />
                     <TextInput
-                        style={estilos.entradaBusca}
+                        style={styles.entradaBusca}
                         placeholder="Buscar medicamento..."
                         placeholderTextColor={cores.textoSecundario}
                         value={busca}
@@ -213,24 +188,24 @@ export default function MedicamentosUsuario() {
             <ScrollView
                 horizontal
                 showsHorizontalScrollIndicator={false}
-                style={estilos.containerFiltros}
-                contentContainerStyle={estilos.contentFiltros}
+                style={styles.containerFiltros}
+                contentContainerStyle={styles.contentFiltros}
             >
                 {tiposUnicos.map((tipo, index) => (
                     <TouchableOpacity
                         key={index}
                         style={[
-                            estilos.filtro,
+                            styles.filtro,
                             ((filtroSelecionado === 'todos' && tipo === 'Todos') ||
-                                filtroSelecionado === tipo) && estilos.filtroSelecionado,
+                                filtroSelecionado === tipo) && styles.filtroSelecionado,
                         ]}
                         onPress={() => setFiltroSelecionado(tipo === 'Todos' ? 'todos' : tipo)}
                     >
                         <Text
                             style={[
-                                estilos.textoFiltro,
+                                styles.textoFiltro,
                                 ((filtroSelecionado === 'todos' && tipo === 'Todos') ||
-                                    filtroSelecionado === tipo) && estilos.textoFiltroSelecionado,
+                                    filtroSelecionado === tipo) && styles.textoFiltroSelecionado,
                             ]}
                         >
                             {tipo}
@@ -246,23 +221,23 @@ export default function MedicamentosUsuario() {
                     data={medicamentos_filtrados}
                     renderItem={renderMedicamento}
                     keyExtractor={item => item.id}
-                    contentContainerStyle={estilos.listaContent}
+                    contentContainerStyle={styles.listaContent}
                     showsVerticalScrollIndicator={false}
                 />
                 </ScrollView>
                 
             ) : (
-                <View style={estilos.estadoVazio}>
+                <View style={styles.estadoVazio}>
                     <MaterialCommunityIcons name="magnify" size={48} color={cores.textoSecundario} />
-                    <Text style={estilos.textoVazio}>Nenhum medicamento encontrado</Text>
-                    <Text style={estilos.textoSecundarioVazio}>Tente uma busca diferente</Text>
+                    <Text style={styles.textoVazio}>Nenhum medicamento encontrado</Text>
+                    <Text style={styles.textoSecundarioVazio}>Tente uma busca diferente</Text>
                 </View>
             )}
         </View>
     );
 }
 
-const estilos = StyleSheet.create({
+const styles = StyleSheet.create({
     containerPrincipal: {
         flex: 1,
         backgroundColor: cores.fundoLeve,
@@ -461,21 +436,6 @@ const estilos = StyleSheet.create({
         paddingTop: 10,
         borderTopWidth: 1,
         borderTopColor: cores.borda,
-    },
-    grupPreco: {
-        alignItems: 'flex-start',
-    },
-    labelPreco: {
-        fontSize: 10,
-        color: cores.textoSecundario,
-        fontWeight: '600',
-        marginBottom: 2,
-        textTransform: 'uppercase',
-    },
-    preco: {
-        fontSize: 16,
-        fontWeight: '700',
-        color: cores.secundaria,
     },
     grupFarmacia: {
         flexDirection: 'row',
