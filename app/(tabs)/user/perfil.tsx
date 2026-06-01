@@ -91,137 +91,137 @@ export default function PerfilUsuario() {
   };
 
   return (
-    <ScrollView style={estilos.containerPrincipal} showsVerticalScrollIndicator={false}>
+    <ScrollView style={styles.containerPrincipal} showsVerticalScrollIndicator={false}>
      
-      <View style={estilos.headerPerfil}>
-        <View style={estilos.fotoPerfil}>
+      <View style={styles.headerPerfil}>
+        <View style={styles.fotoPerfil}>
           {fotoCarregada ? (
-            <Image source={{ uri: 'https://via.placeholder.com/88' }} style={estilos.imagemPerfil} />
+            <Image source={{ uri: 'https://via.placeholder.com/88' }} style={styles.imagemPerfil} />
           ) : (
             <MaterialCommunityIcons name="account" size={50} color={cores.primaria} />
           )}
         </View>
-        <Text style={estilos.nomePerfil}>{dadosUsuario.nome}</Text>
-        <Text style={estilos.statusPerfil}>
+        <Text style={styles.nomePerfil}>{dadosUsuario.nome}</Text>
+        <Text style={styles.statusPerfil}>
           <MaterialCommunityIcons name="check-circle" size={14} color={cores.verdeSuccesso} /> {dadosUsuario.status}
         </Text>
       </View>
 
      
-      <TouchableOpacity style={estilos.botaoAlterarFoto} onPress={handleAlterarFoto}>
+      <TouchableOpacity style={styles.botaoAlterarFoto} onPress={handleAlterarFoto}>
         <MaterialCommunityIcons name="camera-plus-outline" size={18} color={cores.primaria} />
-        <Text style={estilos.textoAlterarFoto}>Alterar Foto</Text>
+        <Text style={styles.textoAlterarFoto}>Alterar Foto</Text>
       </TouchableOpacity>
 
      
-      <View style={estilos.secao}>
-        <View style={estilos.headerSecao}>
+      <View style={styles.secao}>
+        <View style={styles.headerSecao}>
           <MaterialCommunityIcons name="account-box-outline" size={20} color={cores.primaria} />
-          <Text style={estilos.tituloSecao}>Informações Pessoais</Text>
+          <Text style={styles.tituloSecao}>Informações Pessoais</Text>
         </View>
 
       
-        <View style={estilos.linhaInfo}>
-          <View style={estilos.grupoInfo}>
-            <Text style={estilos.labelInfo}>Nome</Text>
-            <Text style={estilos.valorInfo}>{dadosUsuario.nome}</Text>
+        <View style={styles.linhaInfo}>
+          <View style={styles.grupoInfo}>
+            <Text style={styles.labelInfo}>Nome</Text>
+            <Text style={styles.valorInfo}>{dadosUsuario.nome}</Text>
           </View>
         </View>
 
-        <View style={estilos.linhaInfo}>
-          <View style={[estilos.grupoInfo, estilos.grupoMeio]}>
-            <Text style={estilos.labelInfo}>Email</Text>
-            <Text style={estilos.valorInfo}>{dadosUsuario.email}</Text>
+        <View style={styles.linhaInfo}>
+          <View style={[styles.grupoInfo, styles.grupoMeio]}>
+            <Text style={styles.labelInfo}>Email</Text>
+            <Text style={styles.valorInfo}>{dadosUsuario.email}</Text>
           </View>
-          <View style={estilos.grupoInfo}>
-            <Text style={estilos.labelInfo}>Telefone</Text>
-            <Text style={estilos.valorInfo}>{dadosUsuario.telefone}</Text>
+          <View style={styles.grupoInfo}>
+            <Text style={styles.labelInfo}>Telefone</Text>
+            <Text style={styles.valorInfo}>{dadosUsuario.telefone}</Text>
           </View>
         </View>
 
-        <View style={estilos.linhaInfo}>
-          <View style={[estilos.grupoInfo, estilos.grupoMeio]}>
-            <Text style={estilos.labelInfo}>CPF</Text>
-            <Text style={estilos.valorInfo}>{dadosUsuario.cpf}</Text>
+        <View style={styles.linhaInfo}>
+          <View style={[styles.grupoInfo, styles.grupoMeio]}>
+            <Text style={styles.labelInfo}>CPF</Text>
+            <Text style={styles.valorInfo}>{dadosUsuario.cpf}</Text>
           </View>
-          <View style={estilos.grupoInfo}>
-            <Text style={estilos.labelInfo}>Nascimento</Text>
-            <Text style={estilos.valorInfo}>{dadosUsuario.dataNascimento}</Text>
+          <View style={styles.grupoInfo}>
+            <Text style={styles.labelInfo}>Nascimento</Text>
+            <Text style={styles.valorInfo}>{dadosUsuario.dataNascimento}</Text>
           </View>
         </View>
 
       
-        <TouchableOpacity style={estilos.botaoEditar} onPress={handleEditarDados}>
+        <TouchableOpacity style={styles.botaoEditar} onPress={handleEditarDados}>
           <MaterialCommunityIcons name="pencil-outline" size={16} color={cores.primaria} />
-          <Text style={estilos.textoEditar}>Editar Dados</Text>
+          <Text style={styles.textoEditar}>Editar Dados</Text>
         </TouchableOpacity>
       </View>
 
      
-      <View style={estilos.secao}>
-        <View style={estilos.headerSecao}>
+      <View style={styles.secao}>
+        <View style={styles.headerSecao}>
           <MaterialCommunityIcons name="map-marker-outline" size={20} color={cores.primaria} />
-          <Text style={estilos.tituloSecao}>Endereço</Text>
+          <Text style={styles.tituloSecao}>Endereço</Text>
         </View>
 
-        <View style={estilos.linhaInfo}>
-          <View style={estilos.grupoInfo}>
-            <Text style={estilos.labelInfo}>Endereço</Text>
-            <Text style={estilos.valorInfo}>{dadosUsuario.endereco}</Text>
+        <View style={styles.linhaInfo}>
+          <View style={styles.grupoInfo}>
+            <Text style={styles.labelInfo}>Endereço</Text>
+            <Text style={styles.valorInfo}>{dadosUsuario.endereco}</Text>
           </View>
         </View>
 
-        <View style={estilos.linhaInfo}>
-          <View style={[estilos.grupoInfo, estilos.grupoMeio]}>
-            <Text style={estilos.labelInfo}>Cidade</Text>
-            <Text style={estilos.valorInfo}>{dadosUsuario.cidade}</Text>
+        <View style={styles.linhaInfo}>
+          <View style={[styles.grupoInfo, styles.grupoMeio]}>
+            <Text style={styles.labelInfo}>Cidade</Text>
+            <Text style={styles.valorInfo}>{dadosUsuario.cidade}</Text>
           </View>
-          <View style={estilos.grupoInfo}>
-            <Text style={estilos.labelInfo}>Estado</Text>
-            <Text style={estilos.valorInfo}>{dadosUsuario.estado}</Text>
+          <View style={styles.grupoInfo}>
+            <Text style={styles.labelInfo}>Estado</Text>
+            <Text style={styles.valorInfo}>{dadosUsuario.estado}</Text>
           </View>
         </View>
       </View>
 
       
-      <View style={estilos.secao}>
-        <View style={estilos.headerSecao}>
+      <View style={styles.secao}>
+        <View style={styles.headerSecao}>
           <MaterialCommunityIcons name="shield-outline" size={20} color={cores.primaria} />
-          <Text style={estilos.tituloSecao}>Conta</Text>
+          <Text style={styles.tituloSecao}>Conta</Text>
         </View>
 
-        <View style={estilos.linhaInfo}>
-          <View style={[estilos.grupoInfo, estilos.grupoMeio]}>
-            <Text style={estilos.labelInfo}>Data Cadastro</Text>
-            <Text style={estilos.valorInfo}>{dadosUsuario.dataCadastro}</Text>
+        <View style={styles.linhaInfo}>
+          <View style={[styles.grupoInfo, styles.grupoMeio]}>
+            <Text style={styles.labelInfo}>Data Cadastro</Text>
+            <Text style={styles.valorInfo}>{dadosUsuario.dataCadastro}</Text>
           </View>
-          <View style={estilos.grupoInfo}>
-            <Text style={estilos.labelInfo}>Status</Text>
-            <View style={estilos.badgeStatus}>
-              <Text style={estilos.textoBadgeStatus}>{dadosUsuario.status}</Text>
+          <View style={styles.grupoInfo}>
+            <Text style={styles.labelInfo}>Status</Text>
+            <View style={styles.badgeStatus}>
+              <Text style={styles.textoBadgeStatus}>{dadosUsuario.status}</Text>
             </View>
           </View>
         </View>
 
         
-        <TouchableOpacity style={estilos.botaoAlerta} onPress={handleSair}>
+        <TouchableOpacity style={styles.botaoAlerta} onPress={handleSair}>
           <MaterialCommunityIcons name="logout" size={18} color={cores.fundoPagina} />
-          <Text style={estilos.textoAlerta}>Sair da Conta</Text>
+          <Text style={styles.textoAlerta}>Sair da Conta</Text>
         </TouchableOpacity>
 
-        <TouchableOpacity style={estilos.botaoDestruir} onPress={handleExcluirConta}>
+        <TouchableOpacity style={styles.botaoDestruir} onPress={handleExcluirConta}>
           <MaterialCommunityIcons name="trash-can-outline" size={18} color={cores.fundoPagina} />
-          <Text style={estilos.textoDestruir}>Excluir Conta</Text>
+          <Text style={styles.textoDestruir}>Excluir Conta</Text>
         </TouchableOpacity>
       </View>
 
    
-      <View style={estilos.espacoFinal} />
+      <View style={styles.espacoFinal} />
     </ScrollView>
   );
 }
 
-const estilos = StyleSheet.create({
+const styles = StyleSheet.create({
   containerPrincipal: {
     flex: 1,
     backgroundColor: cores.fundoLeve,

@@ -1,10 +1,86 @@
 
 
-import { StyleSheet, View, TouchableOpacity, Image, Text,ScrollView } from "react-native";
-import { Ionicons } from "@expo/vector-icons";
+import { StyleSheet, View, TouchableOpacity, Image, Text, ScrollView, Modal, Alert } from "react-native";
+import { Ionicons, MaterialCommunityIcons } from "@expo/vector-icons";
+import { useState } from "react";
 
+interface Doacao {
+  id: string;
+  nomeMedicamento: string;
+  descricao: string;
+  quantidade: string;
+  dataValidade: string;
+  data: string;
+  fotoDoacacao: string | null;
+  status: string;
+}
 
 export default function HomeScreen() {
+  const [modalVisivel, setModalVisivel] = useState(false);
+  const [doacaoSelecionada, setDoacaoSelecionada] = useState<Doacao | null>(null);
+
+  const doacoes: Doacao[] = [
+    {
+      id: '001',
+      nomeMedicamento: 'Dipirona',
+      descricao: 'Medicamento para febre e dor',
+      quantidade: '50',
+      dataValidade: '12/2027',
+      data: '27/05/2026',
+      fotoDoacacao: null,
+      status: 'Pendente'
+    },
+    {
+      id: '002',
+      nomeMedicamento: 'Dipirona',
+      descricao: 'Medicamento para febre e dor',
+      quantidade: '30',
+      dataValidade: '06/2027',
+      data: '27/05/2026',
+      fotoDoacacao: null,
+      status: 'Aprovado'
+    },
+    {
+      id: '003',
+      nomeMedicamento: 'Dipirona',
+      descricao: 'Medicamento para febre e dor',
+      quantidade: '40',
+      dataValidade: '08/2027',
+      data: '27/05/2026',
+      fotoDoacacao: null,
+      status: 'Aprovado'
+    },
+    {
+      id: '004',
+      nomeMedicamento: 'Dipirona',
+      descricao: 'Medicamento para febre e dor',
+      quantidade: '25',
+      dataValidade: '10/2027',
+      data: '27/05/2026',
+      fotoDoacacao: null,
+      status: 'Aprovado'
+    },
+    {
+      id: '005',
+      nomeMedicamento: 'Dipirona',
+      descricao: 'Medicamento para febre e dor',
+      quantidade: '35',
+      dataValidade: '09/2027',
+      data: '27/05/2026',
+      fotoDoacacao: null,
+      status: 'Aprovado'
+    },
+  ];
+
+  const abrirModalDetalhes = (doacao: Doacao) => {
+    setDoacaoSelecionada(doacao);
+    setModalVisivel(true);
+  };
+
+  const fecharModal = () => {
+    setModalVisivel(false);
+    setDoacaoSelecionada(null);
+  };
 
 
     return (
@@ -96,7 +172,9 @@ export default function HomeScreen() {
                             <Text style={styles.buttonText}>Rejeitar</Text>
                         </TouchableOpacity>
 
-                        <TouchableOpacity style={styles.buttonInfo}>
+                        <TouchableOpacity 
+                            style={styles.buttonInfo}
+                            onPress={() => abrirModalDetalhes(doacoes[0])}>
                             <Ionicons name="information-circle-outline" size={18} color="#fff" />
                             <Text style={styles.buttonText}>Detalhes</Text>
                         </TouchableOpacity>
@@ -169,6 +247,92 @@ export default function HomeScreen() {
 
             </View>
             </ScrollView>
+
+            {/* Modal de Detalhes da Doação */}
+            <Modal
+              visible={modalVisivel}
+              transparent={true}
+              animationType="fade"
+              onRequestClose={fecharModal}
+            >
+              <View style={styles.fundoModal}>
+                <View style={styles.containerModalDoacao}>
+                  <View style={styles.headerModalDoacao}>
+                    <Text style={styles.tituloModalDoacao}>Detalhes da Doação</Text>
+                    <TouchableOpacity onPress={fecharModal}>
+                      <MaterialCommunityIcons name="close" size={28} color="#333" />
+                    </TouchableOpacity>
+                  </View>
+
+                  <ScrollView style={styles.conteudoModalDoacao}>
+                    {doacaoSelecionada?.fotoDoacacao ? (
+                      <Image
+                        style={styles.fotoDoacao}
+                        source={{ uri: doacaoSelecionada.fotoDoacacao }}
+                      />
+                    ) : (
+                      <View style={styles.placeholderFotoModal}>
+                        <MaterialCommunityIcons name="image-off" size={48} color="#ccc" />
+                        <Text style={styles.textoPlaceholder}>Nenhuma foto anexada</Text>
+                      </View>
+                    )}
+
+                    <View style={styles.secaoInfoModal}>
+                      <Text style={styles.labelInfoModal}>Doação</Text>
+                      <Text style={styles.valorInfoModal}>Doação #{doacaoSelecionada?.id}</Text>
+                    </View>
+
+                    <View style={styles.secaoInfoModal}>
+                      <Text style={styles.labelInfoModal}>Medicamento</Text>
+                      <Text style={styles.valorInfoModal}>{doacaoSelecionada?.nomeMedicamento}</Text>
+                    </View>
+
+                    <View style={styles.secaoInfoModal}>
+                      <Text style={styles.labelInfoModal}>Descricao</Text>
+                      <Text style={styles.valorInfoModal}>{doacaoSelecionada?.descricao}</Text>
+                    </View>
+
+                    <View style={styles.secaoInfoModal}>
+                      <Text style={styles.labelInfoModal}>Quantidade</Text>
+                      <Text style={styles.valorInfoModal}>{doacaoSelecionada?.quantidade} unidades</Text>
+                    </View>
+
+                    <View style={styles.secaoInfoModal}>
+                      <Text style={styles.labelInfoModal}>Data de Validade</Text>
+                      <Text style={styles.valorInfoModal}>{doacaoSelecionada?.dataValidade}</Text>
+                    </View>
+
+                    <View style={styles.secaoInfoModal}>
+                      <Text style={styles.labelInfoModal}>Data da Doacao</Text>
+                      <Text style={styles.valorInfoModal}>{doacaoSelecionada?.data}</Text>
+                    </View>
+
+                    <View style={styles.espacoRodapeModal} />
+                  </ScrollView>
+
+                  <View style={styles.rodapeModalDoacao}>
+                    <TouchableOpacity 
+                      style={styles.botaoRejeitar}
+                      onPress={() => {
+                        Alert.alert('Doacao Rejeitada', 'A doacao foi rejeitada com sucesso.');
+                        fecharModal();
+                      }}
+                    >
+                      <Text style={styles.textoBotaoRejeitar}>Rejeitar</Text>
+                    </TouchableOpacity>
+                    <TouchableOpacity 
+                      style={styles.botaoAprovar}
+                      onPress={() => {
+                        Alert.alert('Doacao Aprovada', 'A doacao foi aprovada com sucesso.');
+                        fecharModal();
+                      }}
+                    >
+                      <Text style={styles.textoBotaoAprovar}>Aprovar</Text>
+                    </TouchableOpacity>
+                  </View>
+                </View>
+              </View>
+            </Modal>
         </View>
     );
 }
@@ -388,6 +552,109 @@ const styles = StyleSheet.create({
         gap: 12,
         marginTop: 24,
         marginBottom: 20,
+    },
+
+    fundoModal: {
+      flex: 1,
+      backgroundColor: 'rgba(0, 0, 0, 0.5)',
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: 20,
+    },
+    containerModalDoacao: {
+      backgroundColor: '#fff',
+      borderRadius: 16,
+      padding: 0,
+      maxHeight: '90%',
+      width: '100%',
+    },
+    headerModalDoacao: {
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      alignItems: 'center',
+      paddingVertical: 16,
+      paddingHorizontal: 20,
+      borderBottomWidth: 1,
+      borderBottomColor: '#f0f0f0',
+    },
+    tituloModalDoacao: {
+      fontSize: 20,
+      fontWeight: '700',
+      color: '#333',
+    },
+    conteudoModalDoacao: {
+      maxHeight: '70%',
+      padding: 20,
+    },
+    fotoDoacao: {
+      width: '100%',
+      height: 200,
+      borderRadius: 12,
+      marginBottom: 16,
+    },
+    placeholderFotoModal: {
+      width: '100%',
+      height: 200,
+      backgroundColor: '#f0f0f0',
+      borderRadius: 12,
+      justifyContent: 'center',
+      alignItems: 'center',
+      marginBottom: 16,
+    },
+    textoPlaceholder: {
+      fontSize: 14,
+      color: '#999',
+      marginTop: 8,
+    },
+    secaoInfoModal: {
+      marginVertical: 12,
+    },
+    labelInfoModal: {
+      fontSize: 12,
+      color: '#888',
+      fontWeight: '600',
+      marginBottom: 4,
+      textTransform: 'uppercase',
+    },
+    valorInfoModal: {
+      fontSize: 16,
+      color: '#333',
+      fontWeight: '500',
+    },
+    espacoRodapeModal: {
+      height: 16,
+    },
+    rodapeModalDoacao: {
+      flexDirection: 'row',
+      gap: 12,
+      paddingVertical: 16,
+      paddingHorizontal: 20,
+      borderTopWidth: 1,
+      borderTopColor: '#f0f0f0',
+    },
+    botaoRejeitar: {
+      flex: 1,
+      paddingVertical: 12,
+      borderRadius: 8,
+      backgroundColor: '#E60A0A',
+      alignItems: 'center',
+    },
+    botaoAprovar: {
+      flex: 1,
+      paddingVertical: 12,
+      borderRadius: 8,
+      backgroundColor: '#72CAA5',
+      alignItems: 'center',
+    },
+    textoBotaoRejeitar: {
+      color: '#fff',
+      fontWeight: '600',
+      fontSize: 14,
+    },
+    textoBotaoAprovar: {
+      color: '#fff',
+      fontWeight: '600',
+      fontSize: 14,
     },
 
 });
