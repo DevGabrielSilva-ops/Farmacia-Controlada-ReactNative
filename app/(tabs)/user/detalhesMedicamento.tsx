@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react';
 import {
   View,
   Text,
@@ -11,10 +11,11 @@ import {
   Image,
   TextInput,
   ActivityIndicator,
-  ListRenderItem
+  ListRenderItem,
 } from 'react-native';
-import { useRouter } from 'expo-router';
+import { useRouter} from 'expo-router';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
+import { CameraView, useCameraPermissions } from 'expo-camera';
 
 const cores = {
   primaria: '#72CAA5',
@@ -52,6 +53,13 @@ export default function DetalhesMedicamento() {
   const [medicamentoAdicionado, setMedicamentoAdicionado] = useState(false);
   const [modalAgendamentoVisivel, setModalAgendamentoVisivel] = useState(false);
   const [carregandoAgendamento, setCarregandoAgendamento] = useState(false);
+  const [receita, setReceita] = useState<string | null>(null)
+  const [permissao, setPermissao] = useCameraPermissions()
+  const [cameraAtiva, setCameraAtiva] = useState<boolean>(false)
+  const [ladoCamera, setLadoCamera] = useState<'back' | 'front'>('back');
+  const cameraRef = useRef<any>(null);
+
+
   const [dadosReceita, setDadosReceita] = useState({
     fotoReceita: null,
     crmMedico: '',
@@ -60,6 +68,32 @@ export default function DetalhesMedicamento() {
     dataReceita: '',
     observacoes: '',
   });
+
+  const handleAbrirCamera = async () => {
+    if (!permissao?.granted) {
+        const resposta = await setPermissao();
+
+        if (resposta.granted) {
+            setCameraAtiva(true);
+        }
+    } else {
+        setCameraAtiva(true);
+    }
+    };
+
+    const tirarFoto = async () => {
+        if(cameraRef.current) {
+            try{
+                const foto = await cameraRef.current.takePictureAsync()
+                if(foto && foto.uri){
+                    setCameraAtiva(false)
+                    setReceita(foto.uri)
+                }
+            } catch (error) {
+            alert(error)
+        }
+    }}
+
 
   const medicamento = {
     id: '1',
@@ -149,10 +183,6 @@ export default function DetalhesMedicamento() {
     });
   };
 
-  const handleAdicionarFotoReceita = () => {
-    Alert.alert('Foto da Receita', 'Selecionar da camera ou galeria');
-  };
-
   const confirmarAgendamento = async () => {
     if (!dadosReceita.fotoReceita) {
       Alert.alert('Atencao', 'Por favor, anexe a foto da receita');
@@ -187,15 +217,36 @@ export default function DetalhesMedicamento() {
     }
   };
 
-  const handleAdicionarFavorito = () => {
-    setMedicamentoAdicionado(!medicamentoAdicionado);
-    Alert.alert(
-      'Sucesso',
-      medicamentoAdicionado
-        ? 'Medicamento removido dos favoritos'
-        : 'Medicamento adicionado aos favoritos'
-    );
-  };
+  if(cameraAtiva) {
+          return (
+          <View style={styles.cameraContainer}>
+                  <CameraView 
+                    style={styles.camera} 
+                    facing={ladoCamera} 
+                    ref={cameraRef}
+                  >
+                    <TouchableOpacity style={styles.botaoFecharCamera} onPress={() => setCameraAtiva(false)}>
+                      <Ionicons name="close" size={28} color="#fff" />
+                    </TouchableOpacity>
+          
+                    <View style={styles.containerBotoesCamera}>
+                      <TouchableOpacity 
+                        style={styles.botaoCirculoSecundario} 
+                        onPress={() => setLadoCamera(lado => (lado === 'back' ? 'front' : 'back'))}
+                      >
+                        <Ionicons name="camera-reverse-outline" size={24} color="#FFF" />
+                      </TouchableOpacity>
+          
+                      <TouchableOpacity style={styles.botaoDisparador} onPress={tirarFoto}>
+                        <View style={styles.circuloInternoDisparador} />
+                      </TouchableOpacity>
+          
+                      <View style={{ width: 50 }} />
+                    </View>
+                  </CameraView>
+          </View>
+          )
+      }
 
   const renderFarmacia: ListRenderItem<Farmacias> = ({ item }) => (
     <View style={styles.cartaoFarmacia}>
@@ -259,7 +310,7 @@ export default function DetalhesMedicamento() {
             <MaterialCommunityIcons name="arrow-left" size={24} color={cores.fundoPagina} />
           </TouchableOpacity>
           <Text style={styles.tituloPagina}>Detalhes</Text>
-          <TouchableOpacity style={styles.botaoFavorito} onPress={handleAdicionarFavorito}>
+          <TouchableOpacity style={styles.botaoFavorito}>
             <MaterialCommunityIcons
               name={medicamentoAdicionado ? 'heart' : 'heart-outline'}
               size={24}
@@ -364,11 +415,11 @@ export default function DetalhesMedicamento() {
                 <Text style={styles.labelSecaoFoto}>Foto da Receita *</Text>
                 <TouchableOpacity
                   style={styles.areaFotoReceita}
-                  onPress={handleAdicionarFotoReceita}
+                  onPress={handleAbrirCamera}
                 >
-                  {dadosReceita.fotoReceita ? (
+                  {receita ? (
                     <Image
-                      source={{ uri: dadosReceita.fotoReceita }}
+                      source={receita ? {uri: receita} : require('../../../assets/LogoFarm.fw.png')}
                       style={styles.fotoReceita}
                     />
                   ) : (
@@ -885,4 +936,52 @@ const styles = StyleSheet.create({
     fontWeight: '600',
     color: '#fff',
   },
+
+  cameraContainer: {
+    flex: 1,
+    backgroundColor: '#000',
+  },
+  camera: {
+    flex: 1,
+    justifyContent: 'flex-end',
+    paddingBottom: 40,
+  },
+  botaoFecharCamera: {
+    position: 'absolute',
+    top: 50,
+    right: 20,
+    backgroundColor: 'rgba(0,0,0,0.4)',
+    padding: 10,
+    borderRadius: 30,
+  },
+  containerBotoesCamera: {
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
+    paddingHorizontal: 32,
+  },
+  botaoCirculoSecundario: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  botaoDisparador: {
+    width: 76,
+    height: 76,
+    borderRadius: 38,
+    borderWidth: 4,
+    borderColor: '#FFF',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  circuloInternoDisparador: {
+    width: 62,
+    height: 62,
+    borderRadius: 31,
+    backgroundColor: '#FFF',
+  },
+  
 });
