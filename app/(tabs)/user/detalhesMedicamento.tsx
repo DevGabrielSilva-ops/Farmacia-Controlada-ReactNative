@@ -12,6 +12,7 @@ import {
   TextInput,
   ActivityIndicator,
   ListRenderItem,
+  Linking
 } from 'react-native';
 import { useRouter} from 'expo-router';
 import { MaterialCommunityIcons, Ionicons } from '@expo/vector-icons';
@@ -80,7 +81,20 @@ export default function DetalhesMedicamento() {
         setCameraAtiva(true);
     }
     };
+    const abrirMapa = (endereco:string, nome:string) => {
+      const caminho = `${endereco},${nome}`;
+      const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(caminho)}`;
 
+    Linking.canOpenURL(url)
+    .then((supported) => {
+      if (supported) {
+        Linking.openURL(url);
+      } else {
+        Alert.alert('Erro', 'Não foi possível abrir o aplicativo de mapas.');
+      }
+    })
+    .catch((err) => Alert.alert('Erro', 'Ocorreu um erro ao tentar abrir o mapa.'));
+    }
     const tirarFoto = async () => {
         if(cameraRef.current) {
             try{
@@ -282,7 +296,7 @@ export default function DetalhesMedicamento() {
       )}
 
       <View style={styles.linhaAcoesFarmacia}>
-        <TouchableOpacity style={styles.botaoMapa}>
+        <TouchableOpacity style={styles.botaoMapa} onPress={() => abrirMapa(item.endereco,item.nome)}>
           <MaterialCommunityIcons name="map" size={16} color={cores.primaria} />
           <Text style={styles.textoAcaoMapa}>Mapa</Text>
         </TouchableOpacity>
@@ -331,7 +345,7 @@ export default function DetalhesMedicamento() {
               <Text style={styles.textoCaracteristica}>{medicamento.dosagem}</Text>
             </View>
             <View style={styles.caracteristica}>
-              <MaterialCommunityIcons name='language-typescript' size={16} color={cores.primaria} />
+              <MaterialCommunityIcons name='tsunami' size={16} color={cores.primaria} />
               <Text style={styles.textoCaracteristica}>{medicamento.forma}</Text>
             </View>
             <View style={styles.caracteristica}>

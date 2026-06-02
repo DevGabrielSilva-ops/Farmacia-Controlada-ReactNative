@@ -4,6 +4,7 @@ import { Ionicons } from '@expo/vector-icons';
 import { router } from "expo-router";
 import { useState, useRef } from "react";
 import { CameraView, useCameraPermissions } from "expo-camera";
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 export default function HomeScreen() {
   const { width } = useWindowDimensions();
@@ -12,6 +13,9 @@ export default function HomeScreen() {
   const [permissao, setPermissao] = useCameraPermissions()
   const [cameraAtiva, setCameraAtiva] = useState<boolean>(false)
   const [ladoCamera, setLadoCamera] = useState<'back' | 'front'>('back');
+  const [rua, setRua] = useState<string>('')
+  const [cidade, setCidade] = useState<string>('')
+  const [uf, setUf] = useState<string>('')
   const cameraRef = useRef<any>(null);
 
 
@@ -26,6 +30,27 @@ export default function HomeScreen() {
         setCameraAtiva(true);
     }
     };
+
+  const salvarDados = async () => {
+    if (!rua.trim() || !cidade.trim() || !uf.trim()) {
+      alert('Por favor, preencha todos os campos de endereço.');
+      return;
+    }  
+    
+    try {
+
+        await AsyncStorage.setItem('cidade', cidade) 
+        await AsyncStorage.setItem('rua', rua)
+        await AsyncStorage.setItem('uf', uf)
+
+        setCidade('')
+        setRua('')
+        setUf('')
+      } 
+      catch (erro) {
+        console.log(erro)
+      }
+  }
 
     const tirarFoto = async () => {
         if(cameraRef.current) {
@@ -173,7 +198,8 @@ export default function HomeScreen() {
             <Text style={styles.label}>Endereço</Text>
             <TextInput
               style={styles.input}
-              placeholder="Rua, número, bairro"
+              placeholder="Rua,número"
+              onChangeText={setRua}
               placeholderTextColor="rgba(0, 0, 0, 0.4)"
             />
           </View>
@@ -183,6 +209,7 @@ export default function HomeScreen() {
             <TextInput
               style={styles.input}
               placeholder="UF"
+              onChangeText={setUf}
               placeholderTextColor="rgba(0, 0, 0, 0.4)"
             />
           </View>
@@ -192,6 +219,7 @@ export default function HomeScreen() {
             <TextInput
               style={styles.input}
               placeholder="Cidade"
+              onChangeText={setCidade}
               placeholderTextColor="rgba(0, 0, 0, 0.4)"
             />
           </View>
@@ -217,7 +245,7 @@ export default function HomeScreen() {
           </View>
         </View>
 
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={salvarDados}>
           <Text style={styles.buttonText}>Cadastrar Empresa</Text>
         </TouchableOpacity>
       </View>
