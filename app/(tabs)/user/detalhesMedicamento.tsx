@@ -81,6 +81,8 @@ export default function DetalhesMedicamento() {
         setCameraAtiva(true);
     }
     };
+   
+   
     const abrirMapa = (endereco:string, nome:string) => {
       const caminho = `${endereco},${nome}`;
       const url = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(caminho)}`;
@@ -95,6 +97,23 @@ export default function DetalhesMedicamento() {
     })
     .catch((err) => Alert.alert('Erro', 'Ocorreu um erro ao tentar abrir o mapa.'));
     }
+  
+
+    const fazerLigacao = (telefone:string) => {
+      const numeroLimpo = telefone.replace(/[^0-9+]/g, '');
+      const num = `tel: ${numeroLimpo}`
+
+      Linking.canOpenURL(num)
+    .then((supported) => {
+      if (supported) {
+        Linking.openURL(num);
+      } else {
+        Alert.alert('Erro', 'Este dispositivo não suporta chamadas telefônicas.');
+      }
+    })
+    .catch((err) => Alert.alert('Erro', 'Ocorreu um erro ao tentar abrir discador.'));
+    }
+
     const tirarFoto = async () => {
         if(cameraRef.current) {
             try{
@@ -300,7 +319,7 @@ export default function DetalhesMedicamento() {
           <MaterialCommunityIcons name="map" size={16} color={cores.primaria} />
           <Text style={styles.textoAcaoMapa}>Mapa</Text>
         </TouchableOpacity>
-        <TouchableOpacity style={styles.botaoLigar} disabled={!item.emEstoque}>
+        <TouchableOpacity style={styles.botaoLigar} onPress={() => fazerLigacao(item.telefone)} disabled={!item.emEstoque}>
           <MaterialCommunityIcons name="phone" size={16} color={cores.fundoPagina} />
           <Text style={styles.textoAcaoLigar}>Ligar</Text>
         </TouchableOpacity>
